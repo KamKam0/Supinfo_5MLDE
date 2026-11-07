@@ -1,0 +1,83 @@
+# ==============================================================================
+# .gitignore - Projet MLOps 5MLDE (Catalogue Steam)
+# ==============================================================================
+
+# Environnements virtuels
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Bytecode Python & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Fichiers de données volumineux (Ne JAMAIS commiter de CSV massifs ni de snapshots bruts)
+*.csv
+*.parquet
+*.h5
+*.feather
+data/raw/*
+!data/raw/.gitkeep
+data/snapshots/*
+!data/snapshots/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/fixtures/*
+!data/fixtures/.gitkeep
+data/partitions/*
+!data/partitions/.gitkeep
+!data/partitions/*.json
+
+# Variables d'environnement & Secrets locaux
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+*.crt
+secrets/
+!secrets/.gitkeep
+
+# Bases de données locales & volumes d'état
+*.db
+*.sqlite
+*.sqlite3
+state/
+!state/.gitkeep
+mlruns/
+!mlruns/.gitkeep
+mlartifacts/
+!mlartifacts/.gitkeep
+.prefect/
+data/postgres/*
+!data/postgres/.gitkeep
+data/grafana/*
+!data/grafana/.gitkeep
+
+# Logs & temporaires
+*.log
+logs/
+!logs/.gitkeep
+tmp/
+temp/
+
+# Fichiers système & IDEs
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
