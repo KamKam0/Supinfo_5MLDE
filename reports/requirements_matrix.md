@@ -9,9 +9,9 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | ID | Intitulé Exigence | Module Cible / Emplacement | Protocole de Vérification & Preuve Attendue | Statut |
 |---|---|---|---|---|
 | **REQ-01** | **Code modulaire** | `src/`, `src/tracking/`, `src/orchestration/`, `api_prediction/`, `api_trigger_passif/` | Revue d'architecture, séparation stricte des 4 fonctions mères, tests unitaires par domaine sans interférence | `TODO` |
-| **REQ-02** | **Configuration séparée** | `config/*.json`, `src/settings.py`, `.env.example` | Exécution du projet depuis un répertoire tiers, validation Pydantic des configs, export de la configuration résolue | `TODO` |
-| **REQ-03** | **Dépendances maîtrisées** | `pyproject.toml`, `uv.lock`, conteneurs fixés | Installation déterministe via `uv sync --locked`, audit des versions avec freeze complet | `TODO` |
-| **REQ-04** | **Tests et installation** | `tests/unit/`, `tests/integration/`, `tests/contracts/`, `README.md` | Exécution complète de `pytest` (100% de tests passants) et protocole d'installation "clone vierge" sans aide externe | `TODO` |
+| **REQ-02** | **Configuration séparée** | `config/*.json`, `src/settings.py`, `.env.example` | Exécution du projet depuis un répertoire tiers, validation Pydantic des configs, export de la configuration résolue | `IN_PROGRESS` |
+| **REQ-03** | **Dépendances maîtrisées** | `pyproject.toml`, `uv.lock`, conteneurs fixés | Installation déterministe via `uv sync --locked`, audit des versions avec freeze complet | `DONE` |
+| **REQ-04** | **Tests et installation** | `tests/unit/`, `tests/integration/`, `tests/contracts/`, `README.md` | Exécution complète de `pytest` (100% de tests passants) et protocole d'installation "clone vierge" sans aide externe | `IN_PROGRESS` |
 | **REQ-05** | **Absence de dépendance notebook** | `scripts/*.py`, CLI modulaire, APIs | Exécution nominale de bout en bout de l'ingestion, de l'entraînement et de l'inférence sans aucun serveur Jupyter | `TODO` |
 | **REQ-06** | **Ingestion reproductible** | `src/ingestion.py`, `src/data_sources/`, `data/snapshots/` | Relecture du même snapshot figé avec recalcul du hash SHA-256 et contrôle d'intégrité strict | `TODO` |
 | **REQ-07** | **Qualité avant prétraitement** | `src/data_validation.py`, Great Expectations | Validation bloquante sur données brutes ; espions prouvant l'absence d'appel de l'entraînement si validation KO | `TODO` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 0
-- **Exigences `IN_PROGRESS` :** 2
-- **Exigences `TODO` :** 25
+- **Exigences `DONE` :** 1
+- **Exigences `IN_PROGRESS` :** 4
+- **Exigences `TODO` :** 22
 - **Exigences `BLOCKED` :** 0

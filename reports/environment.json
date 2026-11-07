@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-11-16T09:27:21.749686+00:00",
+  "status": "READY",
+  "system": {
+    "executable": "C:\\Users\\kambj\\Desktop\\Supinfo\\5MLDE\\Final Project\\.venv\\Scripts\\python.exe",
+    "version": "3.12.16",
+    "major_minor": "3.12",
+    "in_venv": true,
+    "platform": "Windows-11-10.0.26300-SP0",
+    "architecture": "AMD64"
+  },
+  "packages": {
+    "pandas": "2.2.3",
+    "numpy": "2.2.6",
+    "scikit-learn": "1.6.1",
+    "joblib": "1.5.1",
+    "great-expectations": "1.23.2",
+    "mlflow": "3.16.1",
+    "prefect": "3.8.7",
+    "fastapi": "0.163.1",
+    "uvicorn": "0.54.0",
+    "pydantic": "2.14.3",
+    "psycopg": "3.3.9",
+    "httpx": "0.28.1",
+    "locust": "2.46.6",
+    "pytest": "9.2.0"
+  },
+  "ports": {
+    "postgres": {
+      "port": 5432,
+      "reachable": true
+    },
+    "mlflow": {
+      "port": 7281,
+      "reachable": true
+    },
+    "prefect": {
+      "port": 4200,
+      "reachable": true
+    },
+    "grafana": {
+      "port": 3001,
+      "reachable": true
+    }
+  },
+  "database": {
+    "connected": true,
+    "ping": true,
+    "tracing_schema_initialized": true,
+    "message": "Connexion PostgreSQL opérationnelle"
+  },
+  "safe_config": {
+    "postgres_host": "127.0.0.1",
+    "postgres_port": 5432,
+    "postgres_db": "steam_api",
+    "postgres_user": "postgres",
+    "postgres_password": "5m***es",
+    "mlflow_tracking_uri": "http://127.0.0.1:7281",
+    "prefect_api_url": "http://127.0.0.1:4200/api",
+    "grafana_url": "http://127.0.0.1:3001"
+  }
+}
