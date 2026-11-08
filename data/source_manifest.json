@@ -1,0 +1,40 @@
+{
+  "dataset_name": "Steam Games Dataset (Kaggle / artermiloff)",
+  "source_url": "https://www.kaggle.com/datasets/artermiloff/steam-games-dataset?resource=download",
+  "acquisition_date": "2026-11-16T10:37:00Z",
+  "author_attribution": "Artem Iltoff (artermiloff) / Valve Corporation / SteamSpy",
+  "source_file": "games_march2025_full.csv",
+  "source_bytes": 471492150,
+  "source_sha256": "1ff3b4fa2eeeb7faf1d9c37abb63b9522813532fbf68f4c4a236d5a466688db7",
+  "projection_file": "historical_projection.csv",
+  "projection_bytes": 11611348,
+  "projection_sha256": "7eec2ff4e6f1389bfb74308c8de1206fee2a94f51120895c2cf7fce84146312f",
+  "row_count": 94948,
+  "column_count": 16,
+  "columns": [
+    "appid",
+    "name",
+    "release_date",
+    "required_age",
+    "price",
+    "dlc_count",
+    "windows",
+    "mac",
+    "linux",
+    "achievements",
+    "genres",
+    "positive",
+    "negative",
+    "pct_pos_total",
+    "num_reviews_total",
+    "estimated_owners"
+  ],
+  "license_and_terms": "Données brutes issues de l'API publique Steam et de SteamSpy via Kaggle. La licence exacte et la date d'extraction ne sont pas formellement établies par la source amont. Usage pédagogique et analytique interne uniquement. Conformément aux règles d'hygiène, aucun CSV brut ou projeté volumineux n'est versionné dans Git.",
+  "scientific_limitations": [
+    "Estimations de propriétaires SteamSpy basées sur échantillonnage de profils publics (pas des chiffres de ventes réels).",
+    "La devise des prix historiques n'est pas précisée (présumée USD, mais variations possibles).",
+    "pct_pos_total = -1 signale l'absence de notation (sentinelle à filtrer pour la régression).",
+    "estimated_owners = '0 - 0' (13 656 jeux) conventionnellement exclue faute de signal exploitable.",
+    "Les métadonnées (prix, avis, tags) sont celles d'un instantané rétrospectif et ne reflètent pas les données antérieures à la sortie des titres."
+  ]
+}

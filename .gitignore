@@ -38,6 +38,8 @@ data/fixtures/*
 data/partitions/*
 !data/partitions/.gitkeep
 !data/partitions/*.json
+!data/examples/*
+!data/examples/*.csv
 
 # Variables d'environnement & Secrets locaux
 .env

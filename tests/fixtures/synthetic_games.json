@@ -1,0 +1,144 @@
+{
+  "nominal_games": [
+    {
+      "appid": 730,
+      "name": "Counter-Strike 2",
+      "release_date": "2012-08-21",
+      "required_age": 0,
+      "price": 0.0,
+      "dlc_count": 1,
+      "windows": true,
+      "mac": false,
+      "linux": true,
+      "achievements": 1,
+      "genres": "['Action', 'Free To Play']",
+      "positive": 6000000,
+      "negative": 1000000,
+      "pct_pos_total": 85.7,
+      "num_reviews_total": 7000000,
+      "estimated_owners": "50000000 - 100000000"
+    },
+    {
+      "appid": 1091500,
+      "name": "Cyberpunk 2077",
+      "release_date": "2020-12-10",
+      "required_age": 18,
+      "price": 59.99,
+      "dlc_count": 1,
+      "windows": true,
+      "mac": false,
+      "linux": false,
+      "achievements": 44,
+      "genres": "['Action', 'RPG']",
+      "positive": 550000,
+      "negative": 120000,
+      "pct_pos_total": 82.1,
+      "num_reviews_total": 670000,
+      "estimated_owners": "20000000 - 50000000"
+    }
+  ],
+  "edge_case_games": [
+    {
+      "appid": 999001,
+      "name": "Boundary Review Game",
+      "release_date": "2023-01-01",
+      "required_age": 0,
+      "price": 4.99,
+      "dlc_count": 0,
+      "windows": true,
+      "mac": true,
+      "linux": true,
+      "achievements": 0,
+      "genres": "['Indie']",
+      "positive": 10,
+      "negative": 0,
+      "pct_pos_total": 100.0,
+      "num_reviews_total": 10,
+      "estimated_owners": "0 - 20000"
+    },
+    {
+      "appid": 999002,
+      "name": "Free Unknown Genre Game",
+      "release_date": null,
+      "required_age": 0,
+      "price": 0.0,
+      "dlc_count": 0,
+      "windows": true,
+      "mac": false,
+      "linux": false,
+      "achievements": 0,
+      "genres": "[]",
+      "positive": 15,
+      "negative": 5,
+      "pct_pos_total": 75.0,
+      "num_reviews_total": 20,
+      "estimated_owners": "20000 - 50000"
+    }
+  ],
+  "sentinel_and_missing_games": [
+    {
+      "appid": 999101,
+      "name": "Sentinel Age Game",
+      "release_date": "2021-05-10",
+      "required_age": -1,
+      "price": 9.99,
+      "dlc_count": 0,
+      "windows": true,
+      "mac": false,
+      "linux": false,
+      "achievements": 5,
+      "genres": "['Casual']",
+      "positive": 100,
+      "negative": 20,
+      "pct_pos_total": 83.3,
+      "num_reviews_total": 120,
+      "estimated_owners": "50000 - 100000"
+    },
+    {
+      "appid": 999102,
+      "name": "No Reviews Sentinel Game",
+      "release_date": "2024-02-01",
+      "required_age": 0,
+      "price": 14.99,
+      "dlc_count": 2,
+      "windows": true,
+      "mac": false,
+      "linux": false,
+      "achievements": 12,
+      "genres": "['Adventure']",
+      "positive": 0,
+      "negative": 0,
+      "pct_pos_total": -1.0,
+      "num_reviews_total": 0,
+      "estimated_owners": "0 - 0"
+    }
+  ],
+  "invalid_anomalies": [
+    {
+      "description": "Prix négatif invalide",
+      "appid": 999201,
+      "price": -10.0,
+      "required_age": 0,
+      "genres": "['Action']"
+    },
+    {
+      "description": "Achievements négatifs invalides",
+      "appid": 999202,
+      "price": 9.99,
+      "achievements": -3,
+      "genres": "['Action']"
+    },
+    {
+      "description": "Format de tranche de propriétaires corrompu",
+      "appid": 999203,
+      "price": 9.99,
+      "estimated_owners": "invalid_range_format"
+    },
+    {
+      "description": "Pourcentage positif supérieur à 100",
+      "appid": 999204,
+      "pct_pos_total": 150.0,
+      "num_reviews_total": 50
+    }
+  ]
+}

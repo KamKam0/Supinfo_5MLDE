@@ -1,0 +1,26 @@
+{
+  "source_path": "data/raw/games_march2025_full.csv",
+  "snapshot_path": "data/snapshots/historical_projection.csv",
+  "selected_columns": [
+    "appid",
+    "name",
+    "release_date",
+    "required_age",
+    "price",
+    "dlc_count",
+    "windows",
+    "mac",
+    "linux",
+    "achievements",
+    "genres",
+    "positive",
+    "negative",
+    "pct_pos_total",
+    "num_reviews_total",
+    "estimated_owners"
+  ],
+  "expected_source_sha256": "1ff3b4fa2eeeb7faf1d9c37abb63b9522813532fbf68f4c4a236d5a466688db7",
+  "expected_projection_sha256": "7eec2ff4e6f1389bfb74308c8de1206fee2a94f51120895c2cf7fce84146312f",
+  "expected_rows": 94948,
+  "random_seed": 42
+}

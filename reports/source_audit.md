@@ -58,11 +58,45 @@ Afin d'éviter tout mélange des flux opérationnels :
 | **Git** | `git version 2.48.1` | Dépôt local initialisé (`main`). Hygiène `.gitignore` validée. |
 | **Docker Engine & Compose** | Docker v29.9.2 actif | Moteur de conteneurs opérationnel. |
 | **Ports réseau :** | | |
-| - Port 8000 (API Inférence) | Libre | Disponible. |
-| - Port 8001 (API Collecte) | Libre | Disponible. |
-| - Port 4200 (Prefect UI) | Libre | Disponible. |
-| - Port 5000 / 7281 (MLflow UI) | Libre | Disponible. |
-| - Port 5432 (PostgreSQL) | Libre sur l'hôte | Disponible pour le bind Compose. |
-| - Port 3000 (Grafana) | Port occupé par un conteneur tiers (`nginx-dev`) | **Attention :** Prévoir un remappage (ex : port 3001 sur l'hôte ou arrêt du conteneur tiers) si le conteneur dev reste actif lors du déploiement de Grafana. |
-| **Source Dataset Steam** | Présente localement | Le fichier brut `games_march2025_full.csv` (471 Mo) est présent dans `..\TP1\data\`. Pas de blocage lié au téléchargement Kaggle. |
+| - Port 8000 (API Collecte PUSH) | Libre | Disponible. |
+| - Port 8001 (API Inférence) | Libre | Disponible. |
+| - Port 4200 (Prefect UI) | Port 4200 actif (healthy) | Validé. |
+| - Port 7281 (MLflow UI) | Port 7281 actif (healthy) | Validé. |
+| - Port 5432 (PostgreSQL) | Port 5432 actif (healthy) | Validé (schéma tracing initialisé). |
+| - Port 3001 (Grafana) | Port 3001 actif (healthy) | Mappé sur 3001 suite à conflit port 3000 tiers. |
+| **Source Dataset Steam** | Présente et validée | `data/raw/games_march2025_full.csv` (471 492 150 octets). SHA-256 : `1ff3b4fa2eeeb7faf1d9c37abb63b9522813532fbf68f4c4a236d5a466688db7` conforme au bit près. |
 | **Alerting Webhook** | Simulable localement | Webhook Teams optionnel ; mise en place prioritaire d'un récepteur local / logging structuré pour garantir l'autonomie totale sans compte tiers. |
+
+---
+
+## 4. Audit Approfondi du Dataset Historique & Qualité des Données
+
+### 4.1. Métriques Globales et Empreintes Cryptographiques
+- **Source brute :** `games_march2025_full.csv` (471 492 150 octets).
+  - Empreinte SHA-256 constatée : `1ff3b4fa2eeeb7faf1d9c37abb63b9522813532fbf68f4c4a236d5a466688db7` (100% conforme à la référence documentaire).
+- **Projection canonique (16 colonnes) :** `data/snapshots/historical_projection.csv` (11 611 348 octets, 94 948 lignes).
+  - Empreinte SHA-256 constatée : `7eec2ff4e6f1389bfb74308c8de1206fee2a94f51120895c2cf7fce84146312f` (100% conforme à la référence pédagogique).
+- **Unicité des identifiants :** 94 948 `appid` strictement uniques (`is_unique = True`).
+
+### 4.2. Analyse des Valeurs Manquantes et Sentinelles
+- **Noms de jeux (`name`) :** Exactement 2 valeurs nulles constatées. N'impacte pas l'apprentissage (la feature textuelle `name` est exclue des prédicteurs).
+- **Prix (`price`) :** 0 valeur manquante. 19 420 jeux gratuits (`price == 0.0`).
+- **Âge requis (`required_age`) :** 1 seule ligne avec la sentinelle `-1` (appid 325140), traitée comme valeur manquante.
+- **Succès (`achievements`) et DLC (`dlc_count`) :** 0 valeur négative.
+- **Sentinelle avis (`pct_pos_total = -1`) :** 39 575 jeux sans pourcentage d'avis positif disponible.
+  - Correspond rigoureusement aux jeux ayant strictement moins de 10 avis (`num_reviews_total < 10`).
+- **Sentinelle propriétaires (`estimated_owners = '0 - 0'`) :** 13 656 jeux conventionnellement exclus pour la tâche de classification faute de signal commercial.
+
+### 4.3. Éligibilité par Tâche Prédictive
+1. **Régression (`pct_pos_total`) :**
+   - Règle : `pct_pos_total != -1` ET `num_reviews_total >= 10`.
+   - Effectif éligible : **55 373 jeux** (soit 58,3 % du catalogue brut).
+2. **Classification (`estimated_owners`) :**
+   - Règle : `estimated_owners != '0 - 0'` ET effectif de classe $\ge 5$.
+   - Effectif éligible : **81 290 jeux** répartis sur **12 classes**.
+   - Deux classes ultra-minoritaires exclues (1 jeu chacune) : `100000000 - 200000000` et `200000000 - 500000000`.
+
+### 4.4. Limites Scientifiques & Biais Documentés
+- **Nature des estimations :** Les tranches de propriétaires reposent sur la méthodologie d'échantillonnage de SteamSpy (profils publics), et non sur les ventes directes certifiées par Valve.
+- **Biais de survie et rétroactivité :** Les métadonnées observées constituent une photographie statique (mars 2025). Elles ne permettent pas d'évaluer la prédictibilité *ex-ante* avant commercialisation.
+- **Incertitude de devise :** La devise des prix historiques n'est pas explicitement spécifiée dans l'en-tête (considérée conventionnellement comme USD).
