@@ -23,7 +23,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-13** | **Versionnement et règles** | MLflow Model Registry, `src/tracking/registry.py` | Règles d'acceptation automatique (critères d'aptitude vs baseline), promotion `champion`/`challenger` et manifeste | `TODO` |
 | **REQ-14** | **Retour arrière (Rollback)** | Manifeste de publication, script de rollback | Réactivation d'une version antérieure du couple de modèles sans réentraînement, conservation des audits de bascule | `TODO` |
 | **REQ-15** | **Prédiction (Inférence)** | FastAPI Inférence (`api_prediction/`) | Endpoints `/predict` unitaire et `/predict/batch` pour régression et classification, réponses typées et validées | `TODO` |
-| **REQ-16** | **Validation et erreurs** | Schémas Pydantic distincts (entraînement vs inférence) | Rejet explicite des requêtes mal formées avec code HTTP 422 et codes d'erreur métier standardisés | `TODO` |
+| **REQ-16** | **Validation et erreurs** | Schémas Pydantic distincts (entraînement vs inférence) | Rejet explicite des requêtes mal formées avec code HTTP 422 et codes d'erreur métier standardisés | `IN_PROGRESS` |
 | **REQ-17** | **Version utilisée** | Entêtes HTTP, corps de réponse, logs persistés | Présence de `model_version`, `model_name` et `request_id` unique dans chaque réponse et traçable en base | `TODO` |
 | **REQ-18** | **Feedbacks** | Endpoint `/feedback`, table PostgreSQL dédiée | Réception des retours utilisateurs/vérités terrain, vérification de l'idempotence et gestion des doublons | `TODO` |
 | **REQ-19** | **Traces d'usage** | Middleware d'observabilité, table PostgreSQL d'audit | Enregistrement transactionnel de chaque requête, temps de réponse, prédiction, version et statut | `TODO` |
@@ -42,6 +42,6 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 
 - **Nombre total d'exigences :** 27
 - **Exigences `DONE` :** 1
-- **Exigences `IN_PROGRESS` :** 5
-- **Exigences `TODO` :** 21
+- **Exigences `IN_PROGRESS` :** 6
+- **Exigences `TODO` :** 20
 - **Exigences `BLOCKED` :** 0
