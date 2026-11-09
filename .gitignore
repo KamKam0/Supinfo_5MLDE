@@ -41,6 +41,14 @@ data/partitions/*
 !data/examples/*
 !data/examples/*.csv
 
+# Artefacts binaires & modèles locaux
+*.joblib
+*.pkl
+*.pickle
+artifacts/*
+!artifacts/.gitkeep
+!artifacts/*.json
+
 # Variables d'environnement & Secrets locaux
 .env
 .env.local

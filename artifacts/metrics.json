@@ -1,0 +1,85 @@
+{
+  "run_id": "run-23f01f16",
+  "regression": {
+    "train": {
+      "samples": 38714,
+      "candidate": {
+        "mae": 11.067301814888589,
+        "rmse": 14.12650089175659,
+        "r2": 0.3498556343605439
+      },
+      "baseline": {
+        "mae": 13.909261769612632,
+        "rmse": 17.519822410952987,
+        "r2": 0.0
+      }
+    },
+    "validation": {
+      "samples": 8286,
+      "candidate": {
+        "mae": 12.530646157825624,
+        "rmse": 16.115207987797316,
+        "r2": 0.160228023724582
+      },
+      "baseline": {
+        "mae": 13.905648390342813,
+        "rmse": 17.58552254827133,
+        "r2": -2.3798265624819237e-07
+      }
+    },
+    "test": {
+      "samples": 8373,
+      "candidate": {
+        "mae": 12.673998087906536,
+        "rmse": 16.22848424765189,
+        "r2": 0.152781099602448
+      },
+      "baseline": {
+        "mae": 13.99602227436767,
+        "rmse": 17.632797091833307,
+        "r2": -0.00018915001203811954
+      }
+    }
+  },
+  "classification": {
+    "train": {
+      "samples": 56902,
+      "candidate": {
+        "accuracy": 0.7690590840392253,
+        "f1_macro": 0.536603825986819
+      },
+      "baseline": {
+        "accuracy": 0.7304664159432006,
+        "f1_macro": 0.07035351945321783
+      }
+    },
+    "validation": {
+      "samples": 12194,
+      "candidate": {
+        "accuracy": 0.7344595702804658,
+        "f1_macro": 0.10357004373088628
+      },
+      "baseline": {
+        "accuracy": 0.7304412005904544,
+        "f1_macro": 0.07035211601345907
+      }
+    },
+    "test": {
+      "samples": 12194,
+      "candidate": {
+        "accuracy": 0.7338035099229129,
+        "f1_macro": 0.10972493873345905
+      },
+      "baseline": {
+        "accuracy": 0.7304412005904544,
+        "f1_macro": 0.07035211601345907
+      }
+    }
+  },
+  "training_durations_sec": {
+    "regression_candidate": 20.973,
+    "regression_baseline": 16.823,
+    "classification_candidate": 26.134,
+    "classification_baseline": 24.44
+  }
+}
