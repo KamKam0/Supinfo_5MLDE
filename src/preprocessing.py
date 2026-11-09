@@ -13,6 +13,7 @@ from typing import Dict, List, Set, Tuple
 import pandas as pd
 
 from src.contracts import IngestionResult, PreparedData, RunContext, TaskDataset
+from src.exceptions import DataValidationError
 from src.partitions import (
     build_stratified_partitions,
     load_reserved_appids,
@@ -51,6 +52,12 @@ def get_or_create_partitions(df: pd.DataFrame, partitions_dir: Path) -> Dict[str
 
 def preprocess_data(ingestion_result: IngestionResult) -> PreparedData:
     """Seconde fonction mère : filtrage d'éligibilité et découpage sans fuite."""
+    if not ingestion_result.gx_success:
+        raise DataValidationError(
+            "[PREPROCESSING] Rejet bloquant : interdiction absolue de prétraiter des données "
+            "non validées par Great Expectations."
+        )
+
     snapshot_path = Path(ingestion_result.snapshot.path)
     df = pd.read_csv(snapshot_path)
     project_root = snapshot_path.parent.parent.parent

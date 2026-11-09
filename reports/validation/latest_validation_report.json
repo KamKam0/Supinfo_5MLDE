@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-11-16T10:16:39.350827+00:00",
+  "suite_name": "historical_schema_v1",
+  "dataset_name": "historical_projection",
+  "row_count": 94948,
+  "column_count": 16,
+  "success": true,
+  "failed_checks_count": 0,
+  "failed_checks": [],
+  "sample_offending_appids": []
+}

@@ -20,6 +20,25 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 # 1. Contrats d'Ingestion & Données Métier
 # ==============================================================================
 
+REQUIRED_SNAPSHOT_COLUMNS: List[str] = [
+    "appid",
+    "name",
+    "release_date",
+    "required_age",
+    "price",
+    "dlc_count",
+    "achievements",
+    "windows",
+    "mac",
+    "linux",
+    "positive",
+    "negative",
+    "num_reviews_total",
+    "pct_pos_total",
+    "genres",
+    "estimated_owners",
+]
+
 OWNER_RANGE_REGEX = re.compile(r"^(\d{1,20})\s*-\s*(\d{1,20})$")
 
 

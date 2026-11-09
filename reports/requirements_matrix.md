@@ -14,8 +14,8 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-04** | **Tests et installation** | `tests/unit/`, `tests/integration/`, `tests/contracts/`, `README.md` | Exécution complète de `pytest` (100% de tests passants) et protocole d'installation "clone vierge" sans aide externe | `IN_PROGRESS` |
 | **REQ-05** | **Absence de dépendance notebook** | `scripts/*.py`, CLI modulaire, APIs | Exécution nominale de bout en bout de l'ingestion, de l'entraînement et de l'inférence sans aucun serveur Jupyter | `DONE` |
 | **REQ-06** | **Ingestion reproductible** | `src/ingestion.py`, `src/data_sources/`, `data/snapshots/` | Relecture du même snapshot figé avec recalcul du hash SHA-256 et contrôle d'intégrité strict | `IN_PROGRESS` |
-| **REQ-07** | **Qualité avant prétraitement** | `src/data_validation.py`, Great Expectations | Validation bloquante sur données brutes ; espions prouvant l'absence d'appel de l'entraînement si validation KO | `TODO` |
-| **REQ-08** | **Arrêt en non-conformité** | `src/exceptions.py`, pipelines Prefect | Interruption immédiate du pipeline en cas d'anomalie, code retour != 0, modèles existants non écrasés | `TODO` |
+| **REQ-07** | **Qualité avant prétraitement** | `src/data_validation.py`, Great Expectations | Validation bloquante sur données brutes ; espions prouvant l'absence d'appel de l'entraînement si validation KO | `DONE` |
+| **REQ-08** | **Arrêt en non-conformité** | `src/exceptions.py`, pipelines Prefect | Interruption immédiate du pipeline en cas d'anomalie, code retour != 0, modèles existants non écrasés | `DONE` |
 | **REQ-09** | **Enchaînement orchestré** | `src/orchestration/tasks.py`, Prefect 3 | Exécution d'un Flow Prefect commun orchestrant les 4 tâches mères, capture du graphe d'états et IDs d'exécution | `TODO` |
 | **REQ-10** | **Déclenchement automatique** | Triggers Prefect, Seuil PUSH dans `api_trigger_passif/` | Déclenchement automatique par cron/intervalle et déclenchement réactif lors du franchissement du seuil de buffer PUSH | `TODO` |
 | **REQ-11** | **Échecs et alertes** | Retries bornés, webhook local (`src/orchestration/alerts.py`) | Simulation d'une panne de dépendance, vérification de l'envoi d'alerte JSON formatée et reprise contrôlée | `TODO` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 3
+- **Exigences `DONE` :** 5
 - **Exigences `IN_PROGRESS` :** 6
-- **Exigences `TODO` :** 18
+- **Exigences `TODO` :** 16
 - **Exigences `BLOCKED` :** 0

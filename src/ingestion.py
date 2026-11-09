@@ -13,6 +13,7 @@ from uuid import uuid4
 import pandas as pd
 
 from src.contracts import IngestionResult, RunContext, SnapshotRef
+from src.data_validation import validate_dataframe
 from src.settings import settings
 
 
@@ -52,10 +53,19 @@ def load_data(config_path: str | Path) -> IngestionResult:
             f"Échec d'intégrité SHA-256 du snapshot : constaté {actual_sha}, attendu {expected_sha}"
         )
 
-    # Lecture des dimensions
+    # Lecture des dimensions et validation bloquante Great Expectations
     df = pd.read_csv(snapshot_path)
     row_count = len(df)
     col_count = len(df.columns)
+
+    suite_name = config.get("validation_suite", "historical_schema_v1")
+    validation_report = validate_dataframe(
+        df,
+        suite_name=suite_name,
+        dataset_name=snapshot_path.stem,
+        raise_on_error=True,
+    )
+    gx_success = bool(validation_report.get("success", False))
 
     run_id = f"run-{uuid4().hex[:8]}"
     context = RunContext(
@@ -76,8 +86,11 @@ def load_data(config_path: str | Path) -> IngestionResult:
     result = IngestionResult(
         context=context,
         snapshot=snapshot_ref,
-        gx_success=True,
+        gx_success=gx_success,
     )
 
-    print(f"[INGESTION] Snapshot validé : {snapshot_path.name} ({row_count:,} lignes, SHA256: {actual_sha[:12]}...)")
+    print(
+        f"[INGESTION] Snapshot validé par GX ({suite_name}) : {snapshot_path.name} "
+        f"({row_count:,} lignes, SHA256: {actual_sha[:12]}...)"
+    )
     return result

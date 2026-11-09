@@ -82,6 +82,7 @@ logs/
 !logs/.gitkeep
 tmp/
 temp/
+reports/validation/validation_failure_*.json
 
 # Fichiers système & IDEs
 .DS_Store
