@@ -17,7 +17,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-07** | **Qualité avant prétraitement** | `src/data_validation.py`, Great Expectations | Validation bloquante sur données brutes ; espions prouvant l'absence d'appel de l'entraînement si validation KO | `DONE` |
 | **REQ-08** | **Arrêt en non-conformité** | `src/exceptions.py`, pipelines Prefect | Interruption immédiate du pipeline en cas d'anomalie, code retour != 0, modèles existants non écrasés | `DONE` |
 | **REQ-09** | **Enchaînement orchestré** | `src/orchestration/tasks.py`, Prefect 3 | Exécution d'un Flow Prefect commun orchestrant les 4 tâches mères, capture du graphe d'états et IDs d'exécution | `TODO` |
-| **REQ-10** | **Déclenchement automatique** | Triggers Prefect, Seuil PUSH dans `api_trigger_passif/` | Déclenchement automatique par cron/intervalle et déclenchement réactif lors du franchissement du seuil de buffer PUSH | `TODO` |
+| **REQ-10** | **Déclenchement automatique** | Triggers Prefect, Seuil PUSH dans `api_trigger_passif/` | Seuil d'accumulation PUSH strict à 500 jeux ; déclencheur Prefect et cron | `IN_PROGRESS` |
 | **REQ-11** | **Échecs et alertes** | Retries bornés, webhook local (`src/orchestration/alerts.py`) | Simulation d'une panne de dépendance, vérification de l'envoi d'alerte JSON formatée et reprise contrôlée | `TODO` |
 | **REQ-12** | **Suivi complet (Tracking)** | MLflow Tracking Server, `src/tracking/mlflow_tracking.py` | Enregistrement systématique des hyperparamètres, métriques, versions de code, snapshots et artefacts rechargeables | `TODO` |
 | **REQ-13** | **Versionnement et règles** | MLflow Model Registry, `src/tracking/registry.py` | Règles d'acceptation automatique (critères d'aptitude vs baseline), promotion `champion`/`challenger` et manifeste | `TODO` |
@@ -42,6 +42,6 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 
 - **Nombre total d'exigences :** 27
 - **Exigences `DONE` :** 6
-- **Exigences `IN_PROGRESS` :** 5
-- **Exigences `TODO` :** 16
+- **Exigences `IN_PROGRESS` :** 6
+- **Exigences `TODO` :** 15
 - **Exigences `BLOCKED` :** 0
