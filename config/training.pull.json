@@ -1,0 +1,30 @@
+{
+  "mode": "pull",
+  "base_snapshot_path": "data/snapshots/historical_projection.csv",
+  "snapshot_path": "data/snapshots/historical_with_pull.csv",
+  "pull_target_appids": [
+    620,
+    400,
+    550
+  ],
+  "validation_suite": "snapshot_integrity_v1",
+  "selected_columns": [
+    "appid",
+    "name",
+    "release_date",
+    "required_age",
+    "price",
+    "dlc_count",
+    "windows",
+    "mac",
+    "linux",
+    "achievements",
+    "genres",
+    "positive",
+    "negative",
+    "pct_pos_total",
+    "num_reviews_total",
+    "estimated_owners"
+  ],
+  "random_seed": 42
+}

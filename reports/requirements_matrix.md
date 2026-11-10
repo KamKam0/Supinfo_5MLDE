@@ -13,7 +13,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-03** | **Dépendances maîtrisées** | `pyproject.toml`, `uv.lock`, conteneurs fixés | Installation déterministe via `uv sync --locked`, audit des versions avec freeze complet | `DONE` |
 | **REQ-04** | **Tests et installation** | `tests/unit/`, `tests/integration/`, `tests/contracts/`, `README.md` | Exécution complète de `pytest` (100% de tests passants) et protocole d'installation "clone vierge" sans aide externe | `IN_PROGRESS` |
 | **REQ-05** | **Absence de dépendance notebook** | `scripts/*.py`, CLI modulaire, APIs | Exécution nominale de bout en bout de l'ingestion, de l'entraînement et de l'inférence sans aucun serveur Jupyter | `DONE` |
-| **REQ-06** | **Ingestion reproductible** | `src/ingestion.py`, `src/data_sources/`, `data/snapshots/` | Relecture du même snapshot figé avec recalcul du hash SHA-256 et contrôle d'intégrité strict | `IN_PROGRESS` |
+| **REQ-06** | **Ingestion reproductible** | `src/ingestion.py`, `src/data_sources/`, `data/snapshots/` | Relecture du snapshot figé, acquisition PULL avec budget réseau, upsert immuable et validation GX | `DONE` |
 | **REQ-07** | **Qualité avant prétraitement** | `src/data_validation.py`, Great Expectations | Validation bloquante sur données brutes ; espions prouvant l'absence d'appel de l'entraînement si validation KO | `DONE` |
 | **REQ-08** | **Arrêt en non-conformité** | `src/exceptions.py`, pipelines Prefect | Interruption immédiate du pipeline en cas d'anomalie, code retour != 0, modèles existants non écrasés | `DONE` |
 | **REQ-09** | **Enchaînement orchestré** | `src/orchestration/tasks.py`, Prefect 3 | Exécution d'un Flow Prefect commun orchestrant les 4 tâches mères, capture du graphe d'états et IDs d'exécution | `TODO` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 5
-- **Exigences `IN_PROGRESS` :** 6
+- **Exigences `DONE` :** 6
+- **Exigences `IN_PROGRESS` :** 5
 - **Exigences `TODO` :** 16
 - **Exigences `BLOCKED` :** 0

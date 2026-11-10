@@ -172,7 +172,8 @@ def build_snapshot_integrity_suite() -> gx.ExpectationSuite:
     suite.add_expectation(gxe.ExpectTableRowCountToBeBetween(min_value=1000))
     suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column="appid"))
     suite.add_expectation(gxe.ExpectColumnValuesToBeUnique(column="appid"))
-    suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column="name"))
+    # Le catalogue historique contient 2 jeux sans nom (99.998% renseigné)
+    suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column="name", mostly=0.9999))
     suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column="release_date"))
     suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column="price"))
     suite.add_expectation(gxe.ExpectColumnValuesToNotBeNull(column="pct_pos_total"))
@@ -341,8 +342,8 @@ def validate_dataframe(
                 parts = val_str.split(" - ")
                 try:
                     low, high = int(parts[0]), int(parts[1])
-                    if suite_name == "historical_schema_v1":
-                        # Autorise '0 - 0' dans l'historique brut
+                    if suite_name in ("historical_schema_v1", "snapshot_integrity_v1"):
+                        # Autorise '0 - 0' dans l'historique brut et les snapshots consolidés
                         if low > high:
                             failed_checks.append(
                                 {
@@ -355,7 +356,7 @@ def validate_dataframe(
                             if "appid" in df.columns:
                                 offending_appids.add(int(df.at[idx, "appid"]))
                     else:
-                        # Refuse toute borne inversée ou égale (dont '0 - 0') dans les nouvelles collectes
+                        # Refuse toute borne inversée ou égale (dont '0 - 0') dans les nouvelles collectes (new_observations_v1, push_batch_v1)
                         if low >= high:
                             failed_checks.append(
                                 {

@@ -41,6 +41,25 @@ def load_data(config_path: str | Path) -> IngestionResult:
     snapshot_raw = config.get("snapshot_path", "data/snapshots/historical_projection.csv")
     snapshot_path = project_root / snapshot_raw if not Path(snapshot_raw).is_absolute() else Path(snapshot_raw)
 
+    # Mode Acquisition active PULL
+    if config.get("mode") == "pull" or "pull_target_appids" in config:
+        from src.data_sources.steam_client import SteamPULLClient
+        from src.data_sources.snapshots import upsert_and_publish_snapshot
+
+        base_raw = config.get("base_snapshot_path", "data/snapshots/historical_projection.csv")
+        base_path = project_root / base_raw if not Path(base_raw).is_absolute() else Path(base_raw)
+        target_appids = config.get("pull_target_appids", [620, 400, 550])
+
+        client = SteamPULLClient()
+        new_obs = client.fetch_batch(target_appids)
+
+        upsert_res = upsert_and_publish_snapshot(
+            base_snapshot_path=base_path,
+            new_observations=new_obs,
+            output_snapshot_path=snapshot_path,
+            reserved_appids_path=project_root / "data" / "partitions" / "reserved_appids.json",
+        )
+
     if not snapshot_path.exists():
         raise FileNotFoundError(f"Snapshot de données introuvable à : {snapshot_path}")
 
@@ -67,11 +86,12 @@ def load_data(config_path: str | Path) -> IngestionResult:
     )
     gx_success = bool(validation_report.get("success", False))
 
+    mode_name = "pull-training" if config.get("mode") == "pull" else "historical-training"
     run_id = f"run-{uuid4().hex[:8]}"
     context = RunContext(
         run_id=run_id,
-        mode="historical-training",
-        batch_id="batch-000",
+        mode=mode_name,
+        batch_id="batch-pull" if config.get("mode") == "pull" else "batch-000",
         attempt=1,
         git_revision=config.get("git_revision", "unknown"),
     )

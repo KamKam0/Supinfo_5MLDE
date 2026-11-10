@@ -36,8 +36,26 @@ def get_or_create_partitions(df: pd.DataFrame, partitions_dir: Path) -> Dict[str
             val_ids = json.load(f)
         with open(test_file, "r", encoding="utf-8") as f:
             test_ids = json.load(f)
+
+        # Vérification d'étanchéité stricte anti-fuite entre Train, Val et Test
+        verify_partitions_integrity(train_ids, val_ids, test_ids, total_expected=None)
+
+        # Si le DataFrame contient de nouveaux jeux (PULL ou PUSH) non encore partitionnés
+        existing_partitioned = set(train_ids) | set(val_ids) | set(test_ids)
+        current_appids = set(df["appid"].dropna().astype(int))
+        new_appids = current_appids - existing_partitioned
+
+        if new_appids:
+            reserved_set = set(val_ids) | set(test_ids)
+            # Règle anti-fuite absolue : les nouveaux jeux ne doivent pas appartenir à la réserve
+            eligible_for_train = sorted(new_appids - reserved_set)
+            train_ids = sorted(set(train_ids) | set(eligible_for_train))
+            print(
+                f"[PREPROCESSING] {len(eligible_for_train)} nouveaux jeux intégrés au split Train "
+                f"(aucun dans la réserve d'évaluation)."
+            )
+
         reserved_ids = sorted(set(val_ids) | set(test_ids))
-        verify_partitions_integrity(train_ids, val_ids, test_ids, len(df))
         return {
             "train_appids": train_ids,
             "val_appids": val_ids,

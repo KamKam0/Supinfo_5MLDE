@@ -40,6 +40,8 @@ data/partitions/*
 !data/partitions/*.json
 !data/examples/*
 !data/examples/*.csv
+data/cache/*
+!data/cache/.gitkeep
 
 # Artefacts binaires & modèles locaux
 *.joblib
