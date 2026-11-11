@@ -1,0 +1,59 @@
+{
+  "regression": {
+    "train": {
+      "candidate": {
+        "mae": 5.2,
+        "rmse": 6.8,
+        "r2": 0.45
+      }
+    },
+    "validation": {
+      "candidate": {
+        "mae": 6.1,
+        "rmse": 7.9,
+        "r2": 0.38
+      },
+      "baseline": {
+        "mae": 10.5,
+        "rmse": 12.1,
+        "r2": -0.05
+      }
+    },
+    "test": {
+      "candidate": {
+        "mae": 6.3,
+        "rmse": 8.0,
+        "r2": 0.36
+      }
+    }
+  },
+  "classification": {
+    "train": {
+      "candidate": {
+        "accuracy": 0.85,
+        "f1_macro": 0.82
+      }
+    },
+    "validation": {
+      "candidate": {
+        "accuracy": 0.78,
+        "f1_macro": 0.75
+      },
+      "baseline": {
+        "accuracy": 0.35,
+        "f1_macro": 0.2
+      }
+    },
+    "test": {
+      "candidate": {
+        "accuracy": 0.76,
+        "f1_macro": 0.73
+      }
+    }
+  },
+  "training_durations_sec": {
+    "regression_seconds": 0.15,
+    "classification_seconds": 0.2,
+    "total_training_seconds": 0.35
+  }
+}

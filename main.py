@@ -41,8 +41,38 @@ def run_pipeline(config_path: str | Path) -> int:
     # 3. Entraînement
     models_bundle = train_models(prepared_data, full_df)
 
-    # 4. Évaluation & Sérialisation
-    evaluate_models(models_bundle, prepared_data, full_df, artifacts_dir="artifacts")
+    # 4. Évaluation & Sérialisation locale
+    eval_metrics = evaluate_models(models_bundle, prepared_data, full_df, artifacts_dir="artifacts")
+
+    # 5. Suivi & Enregistrement MLflow
+    try:
+        from src.tracking.mlflow_tracking import log_training_run
+        mlflow_info = log_training_run(
+            models_bundle=models_bundle,
+            prepared_data=prepared_data,
+            eval_metrics=eval_metrics,
+            sample_df=full_df,
+            snapshot=ingestion_result.snapshot,
+            register_models=True,
+        )
+        print(f"[MLFLOW] Run enregistré avec succès : ID={mlflow_info['mlflow_run_id']}")
+        print(f"  Modèle Régression     : {mlflow_info['regression_model_uri']}")
+        print(f"  Modèle Classification : {mlflow_info['classification_model_uri']}")
+        
+        # Mise à jour du manifeste local avec les références MLflow
+        state_manifest = Path("state") / "local-models.json"
+        if state_manifest.exists():
+            import json
+            with open(state_manifest, "r", encoding="utf-8") as f:
+                s_data = json.load(f)
+            s_data["mlflow_run_id"] = mlflow_info["mlflow_run_id"]
+            s_data["mlflow_experiment_id"] = mlflow_info["experiment_id"]
+            s_data["mlflow_regression_uri"] = mlflow_info["regression_model_uri"]
+            s_data["mlflow_classification_uri"] = mlflow_info["classification_model_uri"]
+            with open(state_manifest, "w", encoding="utf-8") as f:
+                json.dump(s_data, f, indent=2)
+    except Exception as exc:
+        print(f"[MLFLOW AVERTISSEMENT] Suivi MLflow ignoré ou indisponible : {exc}")
 
     total_time = time.time() - t_start
     print(f"[PIPELINE ACHEVÉ] Succès complet en {total_time:.2f}s.")
