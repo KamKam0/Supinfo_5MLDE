@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "policy_name": "Steam MLOps Formal Model Qualification Policy",
+  "version": "1.0.0",
+  "description": "Règles formelles et déterministes d'acceptation, de qualification et de promotion des modèles Steam.",
+  "rules": {
+    "require_finite_metrics": true,
+    "require_reload_test_pass": true,
+    "disallow_synthetic_in_production": true,
+    "mandatory_metrics": [
+      "regression.val.mae",
+      "regression.val.baseline_mae",
+      "regression.val.rmse",
+      "regression.val.r2",
+      "classification.val.accuracy",
+      "classification.val.baseline_accuracy",
+      "classification.val.f1_macro",
+      "classification.val.baseline_f1_macro"
+    ],
+    "thresholds": {
+      "regression": {
+        "max_val_mae": 25.0,
+        "must_beat_baseline_mae": true,
+        "min_improvement_mae_pct": 1.0,
+        "min_val_r2": 0.05
+      },
+      "classification": {
+        "min_val_accuracy": 0.60,
+        "must_beat_baseline_accuracy": true,
+        "must_beat_baseline_f1_macro": true,
+        "min_improvement_f1_pct": 5.0
+      }
+    }
+  },
+  "governance": {
+    "models": {
+      "regression": "steam-positive-ratio",
+      "classification": "steam-owner-range"
+    },
+    "aliases": {
+      "champion": "champion",
+      "challenger": "challenger",
+      "candidate": "candidate"
+    },
+    "allowed_verdicts": [
+      "PRODUCTION_READY",
+      "REJECTED",
+      "DEMO_ONLY"
+    ]
+  }
+}

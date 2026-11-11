@@ -20,8 +20,8 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-10** | **Déclenchement automatique** | Triggers Prefect, Seuil PUSH dans `api_trigger_passif/` | Seuil d'accumulation PUSH strict à 500 jeux ; déclencheur Prefect et cron | `IN_PROGRESS` |
 | **REQ-11** | **Échecs et alertes** | Retries bornés, webhook local (`src/orchestration/alerts.py`) | Simulation d'une panne de dépendance, vérification de l'envoi d'alerte JSON formatée et reprise contrôlée | `TODO` |
 | **REQ-12** | **Suivi complet (Tracking)** | MLflow Tracking Server, `src/tracking/mlflow_tracking.py` | Enregistrement systématique des hyperparamètres, métriques, versions de code, snapshots et artefacts rechargeables | `DONE` |
-| **REQ-13** | **Versionnement et règles** | MLflow Model Registry, `src/tracking/registry.py` | Enregistrement Model Registry des modèles ; règles d'acceptation automatique et promotion | `IN_PROGRESS` |
-| **REQ-14** | **Retour arrière (Rollback)** | Manifeste de publication, script de rollback | Réactivation d'une version antérieure du couple de modèles sans réentraînement, conservation des audits de bascule | `TODO` |
+| **REQ-13** | **Versionnement et règles** | MLflow Model Registry, `src/tracking/registry.py` | Enregistrement Model Registry des modèles, règles d'acceptation automatique et promotion @champion | `DONE` |
+| **REQ-14** | **Retour arrière (Rollback)** | Manifeste de publication, script de rollback | Réactivation d'une version antérieure sans réentraînement validée ; scénario de crise complet | `IN_PROGRESS` |
 | **REQ-15** | **Prédiction (Inférence)** | FastAPI Inférence (`api_prediction/`) | Endpoints `/predict` unitaire et `/predict/batch` pour régression et classification, réponses typées et validées | `TODO` |
 | **REQ-16** | **Validation et erreurs** | Schémas Pydantic distincts (entraînement vs inférence) | Rejet explicite des requêtes mal formées avec code HTTP 422 et codes d'erreur métier standardisés | `IN_PROGRESS` |
 | **REQ-17** | **Version utilisée** | Entêtes HTTP, corps de réponse, logs persistés | Présence de `model_version`, `model_name` et `request_id` unique dans chaque réponse et traçable en base | `TODO` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 7
+- **Exigences `DONE` :** 8
 - **Exigences `IN_PROGRESS` :** 7
-- **Exigences `TODO` :** 13
+- **Exigences `TODO` :** 12
 - **Exigences `BLOCKED` :** 0
