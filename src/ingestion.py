@@ -26,16 +26,18 @@ def compute_file_sha256(file_path: Path | str, chunk_size: int = 1024 * 1024) ->
     return sha.hexdigest().lower()
 
 
-def load_data(config_path: str | Path) -> IngestionResult:
+def load_data(config_input: str | Path | dict) -> IngestionResult:
     """Première fonction mère : acquisition et vérification d'intégrité des données brutes."""
-    conf_path = Path(config_path).resolve()
-    if not conf_path.exists():
-        raise FileNotFoundError(f"Fichier de configuration introuvable : {conf_path}")
-
-    with open(conf_path, "r", encoding="utf-8") as f:
-        config = json.load(f)
-
-    project_root = conf_path.parent.parent
+    if isinstance(config_input, dict):
+        config = config_input
+        project_root = Path(__file__).resolve().parent.parent
+    else:
+        conf_path = Path(config_input).resolve()
+        if not conf_path.exists():
+            raise FileNotFoundError(f"Fichier de configuration introuvable : {conf_path}")
+        with open(conf_path, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        project_root = conf_path.parent.parent
 
     # Résolution des chemins de données
     snapshot_raw = config.get("snapshot_path", "data/snapshots/historical_projection.csv")
@@ -86,14 +88,19 @@ def load_data(config_path: str | Path) -> IngestionResult:
     )
     gx_success = bool(validation_report.get("success", False))
 
-    mode_name = "pull-training" if config.get("mode") == "pull" else "historical-training"
-    run_id = f"run-{uuid4().hex[:8]}"
+    mode_name = config.get("mode") or ("pull-training" if config.get("mode") == "pull" else "historical-training")
+    run_id = config.get("run_id") or f"run-{uuid4().hex[:8]}"
+    batch_id = config.get("batch_id") or ("batch-pull" if config.get("mode") == "pull" else "batch-000")
+    flow_run_id = config.get("flow_run_id")
+    attempt = int(config.get("attempt", 1))
+
     context = RunContext(
         run_id=run_id,
         mode=mode_name,
-        batch_id="batch-pull" if config.get("mode") == "pull" else "batch-000",
-        attempt=1,
+        batch_id=batch_id,
+        attempt=attempt,
         git_revision=config.get("git_revision", "unknown"),
+        flow_run_id=flow_run_id,
     )
 
     snapshot_ref = SnapshotRef(

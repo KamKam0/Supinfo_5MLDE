@@ -89,7 +89,12 @@ def create_classification_baseline() -> Pipeline:
     ])
 
 
-def train_models(prepared_data: PreparedData, full_df: pd.DataFrame) -> TrainedModelsBundle:
+def train_models(
+    prepared_data: PreparedData,
+    full_df: pd.DataFrame,
+    n_estimators: int = 40,
+    max_depth: int = 12,
+) -> TrainedModelsBundle:
     """Troisième fonction mère : ajustement des modèles et des baselines sur Train."""
     durations: Dict[str, float] = {}
     features = list(settings.ALLOWED_INFERENCE_FEATURES)
@@ -103,7 +108,7 @@ def train_models(prepared_data: PreparedData, full_df: pd.DataFrame) -> TrainedM
     y_reg_train = reg_train_df[settings.TARGET_REGRESSION].values
 
     print(f"[TRAINING] Entraînement Régression (Train = {len(X_reg_train):,} exemples)...")
-    reg_pipe = create_regression_pipeline()
+    reg_pipe = create_regression_pipeline(n_estimators=n_estimators, max_depth=max_depth)
     t0 = time.time()
     reg_pipe.fit(X_reg_train, y_reg_train)
     durations["regression_candidate"] = round(time.time() - t0, 3)
@@ -122,7 +127,7 @@ def train_models(prepared_data: PreparedData, full_df: pd.DataFrame) -> TrainedM
     y_cls_train = cls_train_df[settings.TARGET_CLASSIFICATION].values
 
     print(f"[TRAINING] Entraînement Classification (Train = {len(X_cls_train):,} exemples)...")
-    cls_pipe = create_classification_pipeline()
+    cls_pipe = create_classification_pipeline(n_estimators=n_estimators, max_depth=max_depth)
     t0 = time.time()
     cls_pipe.fit(X_cls_train, y_cls_train)
     durations["classification_candidate"] = round(time.time() - t0, 3)

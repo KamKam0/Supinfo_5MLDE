@@ -78,8 +78,7 @@ def preprocess_data(ingestion_result: IngestionResult) -> PreparedData:
 
     snapshot_path = Path(ingestion_result.snapshot.path)
     df = pd.read_csv(snapshot_path)
-    project_root = snapshot_path.parent.parent.parent
-    partitions_dir = project_root / "data" / "partitions"
+    partitions_dir = settings.PROJECT_ROOT / "data" / "partitions"
 
     partitions = get_or_create_partitions(df, partitions_dir)
     train_appids_set = set(partitions["train_appids"])

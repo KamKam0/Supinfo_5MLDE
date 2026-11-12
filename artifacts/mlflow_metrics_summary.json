@@ -1,59 +1,85 @@
 {
+  "run_id": "run-86c14ba1",
   "regression": {
     "train": {
+      "samples": 39209,
       "candidate": {
-        "mae": 5.2,
-        "rmse": 6.8,
-        "r2": 0.45
+        "mae": 12.723034065753144,
+        "rmse": 16.219042721775676,
+        "r2": 0.14197978672825895
+      },
+      "baseline": {
+        "mae": 13.906474400587333,
+        "rmse": 17.50960940618794,
+        "r2": 0.0
       }
     },
     "validation": {
+      "samples": 8286,
       "candidate": {
-        "mae": 6.1,
-        "rmse": 7.9,
-        "r2": 0.38
+        "mae": 12.858430118244234,
+        "rmse": 16.457497524106646,
+        "r2": 0.1241753893868367
       },
       "baseline": {
-        "mae": 10.5,
-        "rmse": 12.1,
-        "r2": -0.05
+        "mae": 13.872179215701822,
+        "rmse": 17.58664637671526,
+        "r2": -0.00012805501149393272
       }
     },
     "test": {
+      "samples": 8373,
       "candidate": {
-        "mae": 6.3,
-        "rmse": 8.0,
-        "r2": 0.36
+        "mae": 13.029541469377163,
+        "rmse": 16.579711094056528,
+        "r2": 0.11579522623769223
+      },
+      "baseline": {
+        "mae": 13.960151447093672,
+        "rmse": 17.631994983613968,
+        "r2": -4.24912040486447e-06
       }
     }
   },
   "classification": {
     "train": {
+      "samples": 57393,
       "candidate": {
-        "accuracy": 0.85,
-        "f1_macro": 0.82
+        "accuracy": 0.7291481539560574,
+        "f1_macro": 0.11449187617554457
+      },
+      "baseline": {
+        "accuracy": 0.7240952729426934,
+        "f1_macro": 0.06999760824381092
       }
     },
     "validation": {
+      "samples": 12194,
       "candidate": {
-        "accuracy": 0.78,
-        "f1_macro": 0.75
+        "accuracy": 0.7310152534033131,
+        "f1_macro": 0.08093406628725497
       },
       "baseline": {
-        "accuracy": 0.35,
-        "f1_macro": 0.2
+        "accuracy": 0.7304412005904544,
+        "f1_macro": 0.07035211601345907
       }
     },
     "test": {
+      "samples": 12195,
       "candidate": {
-        "accuracy": 0.76,
-        "f1_macro": 0.73
+        "accuracy": 0.7304633046330463,
+        "f1_macro": 0.07920084054759778
+      },
+      "baseline": {
+        "accuracy": 0.7302993029930299,
+        "f1_macro": 0.07034421749364168
       }
     }
   },
   "training_durations_sec": {
-    "regression_seconds": 0.15,
-    "classification_seconds": 0.2,
-    "total_training_seconds": 0.35
+    "regression_candidate": 16.358,
+    "regression_baseline": 16.084,
+    "classification_candidate": 23.4,
+    "classification_baseline": 23.46
   }
 }

@@ -29,6 +29,7 @@ def process_batch(
     base_snapshot_path: Optional[Path | str] = None,
     snapshots_dir: Optional[Path | str] = None,
     trigger_training: bool = False,
+    training_kwargs: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Exécute la chaîne de traitement d'un lot : validation GX, publication de snapshot et entraînement.
 
@@ -87,25 +88,28 @@ def process_batch(
         storage.update_batch_status(batch_id, "FAILED", failure_reason=error_msg)
         return {"batch_id": batch_id, "status": "FAILED", "error": error_msg}
 
-    # 4. Déclenchement de l'entraînement si demandé
+    # 4. Déclenchement de l'entraînement orchestré par Prefect si demandé
+    pipeline_result = None
     if trigger_training:
         try:
-            from src.ingestion import load_data
-            from src.preprocessing import preprocess_data
-            from src.evaluation import evaluate_models
+            from src.orchestration.tasks import steam_training_pipeline
 
-            # Préparation de configuration d'entraînement
-            ing_res = load_data(
-                {
+            t_kwargs = training_kwargs or {}
+            pipeline_result = steam_training_pipeline(
+                config={
                     "snapshot_path": str(output_snapshot),
                     "validation_suite": "snapshot_integrity_v1",
-                }
+                    "mode": "push-batch-training",
+                    "batch_id": batch_id,
+                },
+                register_models=t_kwargs.get("register_models", True),
+                qualify=t_kwargs.get("qualify", True),
+                promote_champion=t_kwargs.get("promote_champion", True),
+                n_estimators=t_kwargs.get("n_estimators", 40),
+                max_depth=t_kwargs.get("max_depth", 12),
             )
-            prep_data = preprocess_data(ing_res)
-            # Entraînement
-            train_models(prep_data)
         except Exception as exc:
-            error_msg = f"Échec lors de l'entraînement du lot : {exc}"
+            error_msg = f"Échec lors de l'entraînement orchestré du lot : {exc}"
             logger.error(f"[BATCH] {error_msg}")
             storage.update_batch_status(
                 batch_id,
@@ -135,4 +139,5 @@ def process_batch(
         "snapshot_path": str(output_snapshot),
         "snapshot_sha256": summary["new_snapshot_sha256"],
         "row_count": summary["final_row_count"],
+        "pipeline_result": pipeline_result,
     }

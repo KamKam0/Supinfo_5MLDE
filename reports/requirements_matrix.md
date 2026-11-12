@@ -16,7 +16,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-06** | **Ingestion reproductible** | `src/ingestion.py`, `src/data_sources/`, `data/snapshots/` | Relecture du snapshot figé, acquisition PULL avec budget réseau, upsert immuable et validation GX | `DONE` |
 | **REQ-07** | **Qualité avant prétraitement** | `src/data_validation.py`, Great Expectations | Validation bloquante sur données brutes ; espions prouvant l'absence d'appel de l'entraînement si validation KO | `DONE` |
 | **REQ-08** | **Arrêt en non-conformité** | `src/exceptions.py`, pipelines Prefect | Interruption immédiate du pipeline en cas d'anomalie, code retour != 0, modèles existants non écrasés | `DONE` |
-| **REQ-09** | **Enchaînement orchestré** | `src/orchestration/tasks.py`, Prefect 3 | Exécution d'un Flow Prefect commun orchestrant les 4 tâches mères, capture du graphe d'états et IDs d'exécution | `TODO` |
+| **REQ-09** | **Enchaînement orchestré** | `src/orchestration/tasks.py`, Prefect 3 | Exécution d'un Flow Prefect commun orchestrant les 4 tâches mères, capture du graphe d'états, chaîne de corrélation universelle batch_id -> flow_run_id -> mlflow_run_id -> publication_id | `DONE` |
 | **REQ-10** | **Déclenchement automatique** | Triggers Prefect, Seuil PUSH dans `api_trigger_passif/` | Seuil d'accumulation PUSH strict à 500 jeux ; déclencheur Prefect et cron | `IN_PROGRESS` |
 | **REQ-11** | **Échecs et alertes** | Retries bornés, webhook local (`src/orchestration/alerts.py`) | Simulation d'une panne de dépendance, vérification de l'envoi d'alerte JSON formatée et reprise contrôlée | `TODO` |
 | **REQ-12** | **Suivi complet (Tracking)** | MLflow Tracking Server, `src/tracking/mlflow_tracking.py` | Enregistrement systématique des hyperparamètres, métriques, versions de code, snapshots et artefacts rechargeables | `DONE` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 8
+- **Exigences `DONE` :** 9
 - **Exigences `IN_PROGRESS` :** 7
-- **Exigences `TODO` :** 12
+- **Exigences `TODO` :** 11
 - **Exigences `BLOCKED` :** 0

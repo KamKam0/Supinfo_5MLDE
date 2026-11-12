@@ -99,6 +99,7 @@ def log_training_run(
     run_name: Optional[str] = None,
     register_models: bool = True,
     model_name_suffix: str = "",
+    extra_tags: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """Journalise une tentative d'entraînement complète dans MLflow avec paramètres, métriques et modèles sérialisés."""
     client, exp_id = init_mlflow(tracking_uri=tracking_uri, experiment_name=experiment_name)
@@ -122,6 +123,12 @@ def log_training_run(
         "framework": "scikit-learn",
         "data_gx_validated": str(getattr(context, "gx_validated", getattr(context, "gx_success", True))),
     }
+    if getattr(context, "flow_run_id", None):
+        tags["prefect.flow_run_id"] = str(context.flow_run_id)
+    if getattr(context, "batch_id", None):
+        tags["batch_id"] = str(context.batch_id)
+    if extra_tags:
+        tags.update(extra_tags)
     if snap:
         tags["snapshot_path"] = str(snap.path)
         tags["snapshot_sha256"] = snap.sha256
@@ -262,7 +269,11 @@ def log_training_run(
             "mlflow_run_id": mlflow_run_id,
             "experiment_id": exp_id,
             "tracking_uri": mlflow.get_tracking_uri(),
+            "regression_model_name": reg_name,
+            "regression_model_version": str(reg_model_info.registered_model_version) if reg_model_info.registered_model_version else None,
             "regression_model_uri": reg_model_info.model_uri,
+            "classification_model_name": cls_name,
+            "classification_model_version": str(cls_model_info.registered_model_version) if cls_model_info.registered_model_version else None,
             "classification_model_uri": cls_model_info.model_uri,
             "metrics": metrics,
         }
