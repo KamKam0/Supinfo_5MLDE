@@ -53,6 +53,7 @@ def on_flow_failure(flow: Any, flow_run: Any, state: Any) -> None:
     )
 
     active_run = mlflow.active_run()
+    active_id = None
     if active_run:
         active_id = active_run.info.run_id
         logger.warning(
@@ -63,6 +64,19 @@ def on_flow_failure(flow: Any, flow_run: Any, state: Any) -> None:
             mlflow.end_run(status="FAILED")
         except Exception as exc:
             logger.warning(f"[PREFECT LIFECYCLE] Erreur lors du marquage FAILED du run MLflow : {exc}")
+
+    # Déclenchement automatique de l'alerte
+    try:
+        from src.orchestration.alerts import trigger_failure_alert
+
+        trigger_failure_alert(
+            flow_name=flow_name,
+            flow_run_id=flow_run_id,
+            error_message=str(state_msg),
+            mlflow_run_id=active_id,
+        )
+    except Exception as exc:
+        logger.warning(f"[PREFECT LIFECYCLE] Erreur lors de l'émission d'alerte : {exc}")
 
 
 def format_correlation_chain(
