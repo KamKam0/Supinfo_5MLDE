@@ -25,6 +25,7 @@ import pandas as pd
 
 from src.settings import settings
 from src.tracking.registry import load_model
+from api_prediction.repository import db_pool, register_or_get_model_version
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +101,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     manifest_path_str = os.environ.get("SERVICE_MANIFEST_PATH")
     manifest_path = Path(manifest_path_str).resolve() if manifest_path_str else DEFAULT_MANIFEST_PATH.resolve()
 
-    instance_id = f"inst-{uuid4().hex[:8]}"
+    instance_id = str(uuid4())
     logger.info(
         f"[LIFESPAN] Démarrage du worker {instance_id}. Manifeste cible : {manifest_path}"
     )
@@ -161,12 +162,36 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         # Exécution de la sonde de warm-up
         run_warmup_probe(reg_model, cls_model)
 
+        # Enregistrement / résolution des versions dans tracing.model_versions (PostgreSQL)
+        logger.info("[LIFESPAN] Enregistrement des versions dans PostgreSQL (tracing.model_versions)...")
+        reg_model_id = register_or_get_model_version(
+            pool=db_pool,
+            task="regression",
+            tracking_uri=tracking_uri,
+            registered_name=reg_meta.get("model_name", "steam-positive-ratio"),
+            version=int(reg_meta.get("version", 1)),
+            mlflow_run_id=reg_meta.get("mlflow_run_id", "unknown"),
+            model_uri=reg_uri,
+        )
+        cls_model_id = register_or_get_model_version(
+            pool=db_pool,
+            task="classification",
+            tracking_uri=tracking_uri,
+            registered_name=cls_meta.get("model_name", "steam-owner-range"),
+            version=int(cls_meta.get("version", 1)),
+            mlflow_run_id=cls_meta.get("mlflow_run_id", "unknown"),
+            model_uri=cls_uri,
+        )
+        state.reg_info["model_id"] = reg_model_id
+        state.cls_info["model_id"] = cls_model_id
+
         state.reg_model = reg_model
         state.cls_model = cls_model
         state.is_ready = True
         state.ready_error = None
         logger.info(
-            f"[LIFESPAN] Worker {instance_id} prêt et opérationnel sur le manifeste {state.manifest_id}."
+            f"[LIFESPAN] Worker {instance_id} prêt et opérationnel sur le manifeste {state.manifest_id} "
+            f"(reg_id={reg_model_id}, cls_id={cls_model_id})."
         )
 
     except Exception as exc:
@@ -178,4 +203,5 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     # Arrêt propre du worker
     logger.info(f"[LIFESPAN] Arrêt du worker {instance_id}.")
+    db_pool.close_all()
     state.is_ready = False

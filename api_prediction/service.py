@@ -116,8 +116,8 @@ def run_prediction_batch(
 
         raw_cls = str(cls_preds[idx]).strip()
 
-        pred_reg_id = f"pred-{uuid4().hex[:12]}"
-        pred_cls_id = f"pred-{uuid4().hex[:12]}"
+        pred_reg_id = str(uuid4())
+        pred_cls_id = str(uuid4())
 
         task_reg = TaskPredictionResult(
             prediction_id=pred_reg_id,

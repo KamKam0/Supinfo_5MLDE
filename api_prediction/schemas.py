@@ -198,3 +198,99 @@ class ErrorResponse(BaseModel):
     details: Optional[Any] = Field(
         default=None, description="Détails techniques optionnels d'anomalie ou de validation"
     )
+
+
+# ==============================================================================
+# Contrats de Retours / Feedbacks
+# ==============================================================================
+
+class FeedbackInput(BaseModel):
+    """Contrat d'entrée pour la réception de retours d'utilisation et vérités terrain."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    feedback_id: str = Field(
+        description="Identifiant UUID unique du retour client (utilisé pour détection d'idempotence)"
+    )
+    prediction_id: str = Field(
+        description="Identifiant UUID de la prédiction unitaire ciblée"
+    )
+    useful: Optional[bool] = Field(
+        default=None, description="Avis subjectif sur l'utilité de la prédiction"
+    )
+    observed_pct: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=100.0,
+        description="Pourcentage d'avis positifs réellement constaté (régression)",
+    )
+    observed_owners: Optional[str] = Field(
+        default=None,
+        description="Tranche de propriétaires réellement constatée (classification, ex: '20000 - 50000')",
+    )
+    observed_at: Optional[str] = Field(
+        default=None,
+        description="Date UTC d'observation de la vérité terrain (ISO 8601, obligatoire si observation)",
+    )
+    label_source: Optional[str] = Field(
+        default=None,
+        description="Source de la vérité terrain (ex: 'steam-store-actual', 'loadtest', etc.)",
+    )
+
+    @model_validator(mode="after")
+    def validate_feedback_constraints(self) -> "FeedbackInput":
+        has_opinion = self.useful is not None
+        has_reg_obs = self.observed_pct is not None
+        has_cls_obs = self.observed_owners is not None
+
+        if not (has_opinion or has_reg_obs or has_cls_obs):
+            raise ValueError(
+                "Le feedback doit comporter au moins un avis subjectif ('useful') "
+                "ou une observation réelle ('observed_pct' ou 'observed_owners')."
+            )
+
+        if has_reg_obs and has_cls_obs:
+            raise ValueError(
+                "Une observation ne peut porter simultanément sur la régression et la classification."
+            )
+
+        has_observation = has_reg_obs or has_cls_obs
+        if has_observation:
+            if not self.observed_at:
+                raise ValueError("Toute observation réelle exige obligatoirement le champ 'observed_at'.")
+            if not self.label_source or not self.label_source.strip():
+                raise ValueError("Toute observation réelle exige obligatoirement le champ 'label_source'.")
+        else:
+            if self.observed_at is not None or self.label_source is not None:
+                raise ValueError(
+                    "Les métadonnées 'observed_at' et 'label_source' ne sont autorisées "
+                    "qu'en présence d'une observation ('observed_pct' ou 'observed_owners')."
+                )
+
+        if has_cls_obs:
+            import re
+            m = re.match(r"^(\d{1,20})\s*-\s*(\d{1,20})$", str(self.observed_owners).strip())
+            if not m:
+                raise ValueError(
+                    f"Format de tranche 'observed_owners' invalide : '{self.observed_owners}'. Format attendu: 'lower - upper'."
+                )
+            low, high = int(m.group(1)), int(m.group(2))
+            if low >= high:
+                raise ValueError(
+                    f"Tranche invalide : borne inférieure ({low}) >= borne supérieure ({high})."
+                )
+
+        return self
+
+
+class FeedbackResponse(BaseModel):
+    """Réponse d'enregistrement ou de rejeu d'un feedback."""
+
+    request_id: str = Field(description="Identifiant de transaction HTTP")
+    feedback_id: str = Field(description="Identifiant unique du feedback")
+    prediction_id: str = Field(description="Prédiction associée")
+    status: Literal["created", "replayed"] = Field(
+        description="Statut fonctionnel de l'opération ('created' pour HTTP 201, 'replayed' pour HTTP 200)"
+    )
+    message: str = Field(description="Message de confirmation")
+

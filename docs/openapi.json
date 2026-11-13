@@ -34,7 +34,7 @@
           "Observabilité"
         ],
         "summary": "Health Ready",
-        "description": "Sonde d'aptitude opérationnelle (retourne HTTP 503 si les modèles ne sont pas prêts).",
+        "description": "Sonde d'aptitude opérationnelle (modèles en mémoire ET connectivité PostgreSQL requises).",
         "operationId": "health_ready_health_ready_get",
         "responses": {
           "200": {
@@ -78,7 +78,7 @@
           "Inférence"
         ],
         "summary": "Predict Single",
-        "description": "Inférence unitaire conjointe sur un jeu Steam unique.",
+        "description": "Inférence unitaire conjointe avec persistance relationnelle atomique.",
         "operationId": "predict_single_predict_post",
         "requestBody": {
           "content": {
@@ -120,7 +120,7 @@
             }
           },
           "503": {
-            "description": "Modèles ou dépendance indisponibles",
+            "description": "Modèles ou base de données indisponibles",
             "content": {
               "application/json": {
                 "schema": {
@@ -138,7 +138,7 @@
           "Inférence"
         ],
         "summary": "Predict Batch",
-        "description": "Inférence conjointe vectorisée sur un lot de 1 à 100 jeux Steam.",
+        "description": "Inférence conjointe vectorisée par lot avec persistance atomique de 2N prédictions.",
         "operationId": "predict_batch_predict_batch_post",
         "requestBody": {
           "content": {
@@ -172,7 +172,89 @@
             }
           },
           "503": {
-            "description": "Modèles ou dépendance indisponibles",
+            "description": "Modèles ou base de données indisponibles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/feedback": {
+      "post": {
+        "tags": [
+          "Feedbacks"
+        ],
+        "summary": "Submit Feedback",
+        "description": "Réception et enregistrement transactionnel idempotent des retours d'utilisation.",
+        "operationId": "submit_feedback_feedback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Feedback créé avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Rejeu idempotent (même feedback_id et contenu)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Prédiction introuvable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflit d'identifiant ou prédiction déjà annotée",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incompatibilité de tâche ou validation en échec",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Base PostgreSQL indisponible",
             "content": {
               "application/json": {
                 "schema": {
@@ -265,6 +347,133 @@
         ],
         "title": "ErrorResponse",
         "description": "Enveloppe d'erreur standardisée sans divulgation d'informations sensibles."
+      },
+      "FeedbackInput": {
+        "properties": {
+          "feedback_id": {
+            "type": "string",
+            "title": "Feedback Id",
+            "description": "Identifiant UUID unique du retour client (utilisé pour détection d'idempotence)"
+          },
+          "prediction_id": {
+            "type": "string",
+            "title": "Prediction Id",
+            "description": "Identifiant UUID de la prédiction unitaire ciblée"
+          },
+          "useful": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Useful",
+            "description": "Avis subjectif sur l'utilité de la prédiction"
+          },
+          "observed_pct": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Pct",
+            "description": "Pourcentage d'avis positifs réellement constaté (régression)"
+          },
+          "observed_owners": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Owners",
+            "description": "Tranche de propriétaires réellement constatée (classification, ex: '20000 - 50000')"
+          },
+          "observed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed At",
+            "description": "Date UTC d'observation de la vérité terrain (ISO 8601, obligatoire si observation)"
+          },
+          "label_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Source",
+            "description": "Source de la vérité terrain (ex: 'steam-store-actual', 'loadtest', etc.)"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "feedback_id",
+          "prediction_id"
+        ],
+        "title": "FeedbackInput",
+        "description": "Contrat d'entrée pour la réception de retours d'utilisation et vérités terrain."
+      },
+      "FeedbackResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Identifiant de transaction HTTP"
+          },
+          "feedback_id": {
+            "type": "string",
+            "title": "Feedback Id",
+            "description": "Identifiant unique du feedback"
+          },
+          "prediction_id": {
+            "type": "string",
+            "title": "Prediction Id",
+            "description": "Prédiction associée"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "created",
+              "replayed"
+            ],
+            "title": "Status",
+            "description": "Statut fonctionnel de l'opération ('created' pour HTTP 201, 'replayed' pour HTTP 200)"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Message de confirmation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "feedback_id",
+          "prediction_id",
+          "status",
+          "message"
+        ],
+        "title": "FeedbackResponse",
+        "description": "Réponse d'enregistrement ou de rejeu d'un feedback."
       },
       "GamePredictionItem": {
         "properties": {

@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any, Dict, List
+from uuid import uuid4
 import pytest
 from starlette.testclient import TestClient
 
@@ -322,7 +323,7 @@ def test_rejection_oversized_batch(api_client: TestClient, valid_single_game: Di
 
 def test_custom_request_id_propagation(api_client: TestClient, valid_single_game: Dict[str, Any]):
     """Vérifie la prise en compte et la propagation d'un X-Request-ID client."""
-    custom_req_id = "req-client-audit-987654321"
+    custom_req_id = f"req-client-audit-{uuid4().hex[:12]}"
     res = api_client.post(
         "/predict",
         json={"game": valid_single_game},

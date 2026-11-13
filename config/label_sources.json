@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "sources": {
+    "steam-store-actual": {
+      "type": "real",
+      "description": "Données réelles issues de l'API Steam Store et de la page magasin",
+      "applicable_tasks": ["regression", "classification"],
+      "is_comparable_for_quality": true
+    },
+    "steam-user-survey": {
+      "type": "real",
+      "description": "Retours directs d'utilisateurs et analystes sur la plateforme",
+      "applicable_tasks": ["regression", "classification"],
+      "is_comparable_for_quality": true
+    },
+    "synthetic-course": {
+      "type": "artificial",
+      "description": "Données synthétiques d'évaluation pédagogique du cours 5MLDE",
+      "applicable_tasks": ["regression", "classification"],
+      "is_comparable_for_quality": false
+    },
+    "loadtest": {
+      "type": "artificial",
+      "description": "Labels générés automatiquement lors des campagnes de tests de charge Locust",
+      "applicable_tasks": ["regression", "classification"],
+      "is_comparable_for_quality": false
+    }
+  }
+}
