@@ -1,0 +1,746 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Steam MLOps Prediction Service",
+    "description": "Service d'inférence en ligne haute performance pour l'estimation conjointe du pourcentage d'avis positifs et de la tranche de propriétaires estimés sur le catalogue Steam.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health/live": {
+      "get": {
+        "tags": [
+          "Observabilité"
+        ],
+        "summary": "Health Live",
+        "description": "Sonde de vivacité élémentaire confirmant que le processus répond.",
+        "operationId": "health_live_health_live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": [
+          "Observabilité"
+        ],
+        "summary": "Health Ready",
+        "description": "Sonde d'aptitude opérationnelle (retourne HTTP 503 si les modèles ne sont pas prêts).",
+        "operationId": "health_ready_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/models": {
+      "get": {
+        "tags": [
+          "Gouvernance"
+        ],
+        "summary": "Get Models Info",
+        "description": "Consulte le manifeste de service et les versions exactes actives.",
+        "operationId": "get_models_info_models_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelsInfoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict": {
+      "post": {
+        "tags": [
+          "Inférence"
+        ],
+        "summary": "Predict Single",
+        "description": "Inférence unitaire conjointe sur un jeu Steam unique.",
+        "operationId": "predict_single_predict_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/SinglePredictionRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/InferenceGameInput"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation d'entrée rejetée (extra interdit)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Modèles ou dépendance indisponibles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/batch": {
+      "post": {
+        "tags": [
+          "Inférence"
+        ],
+        "summary": "Predict Batch",
+        "description": "Inférence conjointe vectorisée sur un lot de 1 à 100 jeux Steam.",
+        "operationId": "predict_batch_predict_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchPredictionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation de lot rejetée (1 à 100 jeux requis)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Modèles ou dépendance indisponibles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatchPredictionRequest": {
+        "properties": {
+          "games": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/InferenceGameInput"
+                },
+                "type": "array",
+                "maxItems": 100,
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Games",
+            "description": "Liste ordonnée de jeux (1 à 100 éléments)"
+          },
+          "items": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/InferenceGameInput"
+                },
+                "type": "array",
+                "maxItems": 100,
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Items",
+            "description": "Alias de 'games' (1 à 100 éléments)"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "BatchPredictionRequest",
+        "description": "Conteneur d'entrée pour la prédiction vectorisée par lot (1 à 100 jeux)."
+      },
+      "ErrorResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Identifiant de corrélation de la requête en échec"
+          },
+          "error_code": {
+            "type": "string",
+            "title": "Error Code",
+            "description": "Code d'erreur fonctionnel standard (INVALID_INPUT, DEPENDENCY_UNAVAILABLE, etc.)"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Message explicatif clair et non confidentiel"
+          },
+          "details": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details",
+            "description": "Détails techniques optionnels d'anomalie ou de validation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "error_code",
+          "message"
+        ],
+        "title": "ErrorResponse",
+        "description": "Enveloppe d'erreur standardisée sans divulgation d'informations sensibles."
+      },
+      "GamePredictionItem": {
+        "properties": {
+          "item_index": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Item Index",
+            "description": "Position séquentielle de l'élément (base 0)"
+          },
+          "appid": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appid",
+            "description": "Identifiant Steam du jeu"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/TaskPredictionResult"
+            },
+            "type": "array",
+            "title": "Predictions",
+            "description": "Résultats prédictifs couvrant les deux tâches (régression & classification)"
+          },
+          "predicted_pct": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Pct",
+            "description": "Pourcentage d'avis positifs prédit [0, 100]"
+          },
+          "predicted_owners": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Owners",
+            "description": "Tranche de propriétaires prédite"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_index",
+          "predictions"
+        ],
+        "title": "GamePredictionItem",
+        "description": "Résultat prédictif conjoint pour un jeu individuel."
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "live",
+              "ready",
+              "not_ready"
+            ],
+            "title": "Status",
+            "description": "État de santé"
+          },
+          "service": {
+            "type": "string",
+            "title": "Service",
+            "description": "Nom du composant",
+            "default": "steam-prediction-api"
+          },
+          "instance_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instance Id",
+            "description": "Identifiant unique du worker actif"
+          },
+          "manifest_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manifest Id",
+            "description": "Identifiant du manifeste servi"
+          },
+          "models_loaded": {
+            "type": "boolean",
+            "title": "Models Loaded",
+            "description": "Indicateur de chargement des modèles",
+            "default": false
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp",
+            "description": "Horodatage UTC ISO 8601"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error",
+            "description": "Détail de l'incident éventuel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "timestamp"
+        ],
+        "title": "HealthResponse",
+        "description": "Réponse des sondes d'observabilité live et ready."
+      },
+      "InferenceGameInput": {
+        "properties": {
+          "appid": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Appid",
+            "description": "Identifiant Steam unique pour audit et traçabilité"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Nom indicatif du jeu (non mobilisé par les estimateurs)"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price",
+            "description": "Prix du jeu en devise de référence (>= 0.0)",
+            "default": 0.0
+          },
+          "required_age": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Age",
+            "description": "Âge légal minimum requis (>= 0)",
+            "default": 0
+          },
+          "dlc_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dlc Count",
+            "description": "Nombre de contenus téléchargeables (DLCs) (>= 0)",
+            "default": 0
+          },
+          "achievements": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Achievements",
+            "description": "Nombre de succès déblocables (>= 0)",
+            "default": 0
+          },
+          "windows": {
+            "type": "boolean",
+            "title": "Windows",
+            "description": "Compatibilité système Windows",
+            "default": true
+          },
+          "mac": {
+            "type": "boolean",
+            "title": "Mac",
+            "description": "Compatibilité système macOS",
+            "default": false
+          },
+          "linux": {
+            "type": "boolean",
+            "title": "Linux",
+            "description": "Compatibilité système Linux",
+            "default": false
+          },
+          "genres": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            ],
+            "title": "Genres",
+            "description": "Liste ou chaîne des genres déclarés (ex: ['Action', 'Indie'])"
+          },
+          "release_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Release Date",
+            "description": "Date de sortie (format recommandé YYYY-MM-DD)"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "InferenceGameInput",
+        "description": "Entrée d'inférence pour un jeu vidéo Steam.\n\nRÈGLE ABSOLUE ANTI-FUITE :\nLes variables cibles et de fuite temporelle/métrique :\n`pct_pos_total`, `estimated_owners`, `num_reviews_total`, `positive`, `negative`\nsont formellement interdites et déclenchent une erreur HTTP 422 (extra='forbid')."
+      },
+      "ModelsInfoResponse": {
+        "properties": {
+          "manifest_id": {
+            "type": "string",
+            "title": "Manifest Id",
+            "description": "Identifiant unique du manifeste"
+          },
+          "instance_id": {
+            "type": "string",
+            "title": "Instance Id",
+            "description": "Identifiant du worker courant"
+          },
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "description": "Mode d'exploitation ('qualified' ou 'demo')"
+          },
+          "generated_at": {
+            "type": "string",
+            "title": "Generated At",
+            "description": "Date de génération du manifeste"
+          },
+          "manifest_sha256": {
+            "type": "string",
+            "title": "Manifest Sha256",
+            "description": "Empreinte cryptographique SHA-256 du manifeste"
+          },
+          "mlflow_tracking_uri": {
+            "type": "string",
+            "title": "Mlflow Tracking Uri",
+            "description": "URI MLflow de référence"
+          },
+          "models": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Models",
+            "description": "Dictionnaire des versions de modèles figées"
+          }
+        },
+        "type": "object",
+        "required": [
+          "manifest_id",
+          "instance_id",
+          "mode",
+          "generated_at",
+          "manifest_sha256",
+          "mlflow_tracking_uri",
+          "models"
+        ],
+        "title": "ModelsInfoResponse",
+        "description": "Détail du manifeste de service et des modèles actifs."
+      },
+      "PredictionResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Identifiant unique de la transaction HTTP de prédiction"
+          },
+          "manifest_id": {
+            "type": "string",
+            "title": "Manifest Id",
+            "description": "Identifiant du manifeste de service actif"
+          },
+          "item_count": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Item Count",
+            "description": "Nombre total de jeux évalués dans cette transaction"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/GamePredictionItem"
+            },
+            "type": "array",
+            "title": "Results",
+            "description": "Liste ordonnée des résultats prédictifs"
+          },
+          "processing_duration_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Processing Duration Ms",
+            "description": "Durée totale de traitement côté API en millisecondes"
+          },
+          "inference_duration_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Inference Duration Ms",
+            "description": "Durée pure d'inférence des pipelines ML en millisecondes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "manifest_id",
+          "item_count",
+          "results",
+          "processing_duration_ms",
+          "inference_duration_ms"
+        ],
+        "title": "PredictionResponse",
+        "description": "Structure commune standardisée de réponse d'inférence."
+      },
+      "SinglePredictionRequest": {
+        "properties": {
+          "game": {
+            "$ref": "#/components/schemas/InferenceGameInput",
+            "description": "Caractéristiques du jeu soumis à l'inférence"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "game"
+        ],
+        "title": "SinglePredictionRequest",
+        "description": "Conteneur d'entrée pour la prédiction unitaire sous clé 'game'."
+      },
+      "TaskModelInfo": {
+        "properties": {
+          "server_uri": {
+            "type": "string",
+            "title": "Server Uri",
+            "description": "URI du serveur MLflow de référence"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name",
+            "description": "Nom du modèle dans le registre MLflow"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version",
+            "description": "Numéro de version exact servi"
+          },
+          "mlflow_run_id": {
+            "type": "string",
+            "title": "Mlflow Run Id",
+            "description": "Identifiant du run d'entraînement source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "server_uri",
+          "model_name",
+          "model_version",
+          "mlflow_run_id"
+        ],
+        "title": "TaskModelInfo",
+        "description": "Identité formelle du modèle ayant produit la prédiction."
+      },
+      "TaskPredictionResult": {
+        "properties": {
+          "prediction_id": {
+            "type": "string",
+            "title": "Prediction Id",
+            "description": "Identifiant unique de la prédiction"
+          },
+          "task": {
+            "type": "string",
+            "enum": [
+              "regression",
+              "classification"
+            ],
+            "title": "Task",
+            "description": "Type de tâche ML ('regression' ou 'classification')"
+          },
+          "target_column": {
+            "type": "string",
+            "title": "Target Column",
+            "description": "Nom de la variable cible prédite ('pct_pos_total' ou 'estimated_owners')"
+          },
+          "predicted_value": {
+            "title": "Predicted Value",
+            "description": "Valeur prédite (réel [0, 100] pour régression, tranche textuelle pour classification)"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit",
+            "description": "Unité de mesure ou label de référence"
+          },
+          "model": {
+            "$ref": "#/components/schemas/TaskModelInfo",
+            "description": "Métadonnées d'audit du modèle mobilisé"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prediction_id",
+          "task",
+          "target_column",
+          "predicted_value",
+          "model"
+        ],
+        "title": "TaskPredictionResult",
+        "description": "Résultat prédictif unitaire pour une tâche spécifique."
+      }
+    }
+  }
+}

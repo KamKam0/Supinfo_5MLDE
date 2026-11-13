@@ -22,9 +22,9 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-12** | **Suivi complet (Tracking)** | MLflow Tracking Server, `src/tracking/mlflow_tracking.py` | Enregistrement systématique des hyperparamètres, métriques, versions de code, snapshots et artefacts rechargeables | `DONE` |
 | **REQ-13** | **Versionnement et règles** | MLflow Model Registry, `src/tracking/registry.py` | Enregistrement Model Registry des modèles, règles d'acceptation automatique et promotion @champion | `DONE` |
 | **REQ-14** | **Retour arrière (Rollback)** | Manifeste de publication, script de rollback | Réactivation d'une version antérieure sans réentraînement validée ; scénario de crise complet | `IN_PROGRESS` |
-| **REQ-15** | **Prédiction (Inférence)** | FastAPI Inférence (`api_prediction/`) | Endpoints `/predict` unitaire et `/predict/batch` pour régression et classification, réponses typées et validées | `TODO` |
-| **REQ-16** | **Validation et erreurs** | Schémas Pydantic distincts (entraînement vs inférence) | Rejet explicite des requêtes mal formées avec code HTTP 422 et codes d'erreur métier standardisés | `IN_PROGRESS` |
-| **REQ-17** | **Version utilisée** | Entêtes HTTP, corps de réponse, logs persistés | Présence de `model_version`, `model_name` et `request_id` unique dans chaque réponse et traçable en base | `TODO` |
+| **REQ-15** | **Prédiction (Inférence)** | `api_prediction/`, `scripts/build_service_manifest.py`, `state/service-manifest.json` | Endpoints `/predict` unitaire et `/predict/batch` pour régression et classification conjointes, chargement au lifespan sans reload par requête, tests validés | `DONE` |
+| **REQ-16** | **Validation et erreurs** | `api_prediction/schemas.py`, `src/contracts.py` | Schémas Pydantic stricts (extra='forbid'), rejet formel en HTTP 422 de toute variable cible (pct_pos_total, etc.), codes d'erreurs standardisés | `DONE` |
+| **REQ-17** | **Version utilisée** | Entêtes HTTP, corps de réponse, logs persistés | Présence de `model_version`, `model_name` et `request_id` unique dans chaque réponse HTTP et traçable en base PostgreSQL | `IN_PROGRESS` |
 | **REQ-18** | **Feedbacks** | Endpoint `/feedback`, table PostgreSQL dédiée | Réception des retours utilisateurs/vérités terrain, vérification de l'idempotence et gestion des doublons | `TODO` |
 | **REQ-19** | **Traces d'usage** | Middleware d'observabilité, table PostgreSQL d'audit | Enregistrement transactionnel de chaque requête, temps de réponse, prédiction, version et statut | `TODO` |
 | **REQ-20** | **Charge** | `locustfile.py`, scénarios de charge | Campagnes de tirs Locust documentées avec génération de rapports de latence, throughput et erreurs | `TODO` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 11
+- **Exigences `DONE` :** 13
 - **Exigences `IN_PROGRESS` :** 6
-- **Exigences `TODO` :** 10
+- **Exigences `TODO` :** 8
 - **Exigences `BLOCKED` :** 0
