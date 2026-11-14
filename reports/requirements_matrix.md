@@ -27,9 +27,9 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-17** | **Version utilisée** | `api_prediction/main.py`, `infra/postgres/010-tracing.sql` | Présence de `model_version`, `model_name` et `request_id` unique dans chaque réponse HTTP et traçabilité en base PostgreSQL `tracing.model_versions` | `DONE` |
 | **REQ-18** | **Feedbacks** | `api_prediction/feedback.py`, `config/label_sources.json` | Réception des retours utilisateurs/vérités terrain sur `POST /feedback`, idempotence stricte, gestion des conflits 409 et cardinalité 1-1 | `DONE` |
 | **REQ-19** | **Traces d'usage** | `api_prediction/repository.py`, `infra/postgres/010-tracing.sql` | Enregistrement transactionnel atomique de chaque requête (`api_requests`) et $2N$ prédictions (`predictions`), durées monotones | `DONE` |
-| **REQ-20** | **Charge** | `locustfile.py`, scénarios de charge | Campagnes de tirs Locust documentées avec génération de rapports de latence, throughput et erreurs | `TODO` |
-| **REQ-21** | **Comparaison et ressources** | Benchmarks 1, 2, 4 workers, profilage CPU/RAM | Table comparative de performance avec saturation CPU/mémoire mesurée sur conteneurs | `TODO` |
-| **REQ-22** | **Recommandation chiffrée** | Rapport de dimensionnement technique | Dimensionnement matériel cible étayé par les données expérimentales et hypothèses de charge | `TODO` |
+| **REQ-20** | **Charge** | `tests/load/locustfile.py`, `scripts/run_capacity_matrix.py` | Campagnes de tirs Locust documentées avec génération de rapports de latence, throughput et erreurs | `DONE` |
+| **REQ-21** | **Comparaison et ressources** | Benchmarks 1, 2, 4 workers, profilage CPU/RAM (`scripts/collect_resources.py`) | Table comparative de performance avec saturation CPU/mémoire mesurée sur conteneurs | `DONE` |
+| **REQ-22** | **Recommandation chiffrée** | Rapport de dimensionnement technique (`reports/sizing.md`) | Dimensionnement matériel cible étayé par les données expérimentales et hypothèses de charge | `DONE` |
 | **REQ-23** | **Dashboard complet** | Tableau de bord Grafana provisionné | Visualisation des volumes d'ingestion, taux de prédiction, distribution des temps de latence, erreurs et retours | `DONE` |
 | **REQ-24** | **Démonstration intégrée** | `scripts/demo_full.py`, rapport de soutenance | Scénario de bout en bout : nominal, injection de données invalides, incident simulé, alerte et reprise | `TODO` |
 | **REQ-25** | **Dépôt propre** | Racine projet, `.gitignore`, exclusion de secrets/data | Inspection de l'arbre Git prouvant l'absence totale de CSV volumineux, secrets ou caches | `IN_PROGRESS` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 17
+- **Exigences `DONE` :** 20
 - **Exigences `IN_PROGRESS` :** 6
-- **Exigences `TODO` :** 4
+- **Exigences `TODO` :** 1
 - **Exigences `BLOCKED` :** 0

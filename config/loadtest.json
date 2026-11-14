@@ -1,0 +1,32 @@
+{
+  "loadtest_schema_version": "1.0.0",
+  "created_at_utc": "2026-11-16T18:00:00Z",
+  "fixtures_path": "fixtures/load_fixtures.json",
+  "fixtures_sha256": "a83d6c28d23cd88b978db9727b185a22b7c183b4062d7533decb9d7e24779376",
+  "service_host": "http://127.0.0.1:8001",
+  "warmup_seconds": 15,
+  "stable_duration_seconds": 60,
+  "repetitions_per_step": 3,
+  "workers_matrix": [1, 2, 4],
+  "concurrency_matrix": [5, 10, 20, 40],
+  "slo": {
+    "single": {
+      "max_p95_ms": 500.0,
+      "max_error_rate_pct": 1.0
+    },
+    "batch": {
+      "batch_size": 20,
+      "max_p95_ms": 1500.0,
+      "max_error_rate_pct": 1.0
+    },
+    "mixed": {
+      "ratio_single": 0.70,
+      "ratio_batch": 0.20,
+      "ratio_feedback": 0.10
+    }
+  },
+  "sizing": {
+    "safe_margin": 0.30,
+    "target_peak_qps_hypothesis": 150.0
+  }
+}

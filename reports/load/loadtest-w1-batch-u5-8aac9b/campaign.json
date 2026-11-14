@@ -1,0 +1,23 @@
+{
+  "campaign_id": "loadtest-w1-batch-u5-8aac9b",
+  "scenario": "batch",
+  "user_class": "BatchPredictionUser",
+  "workers_count": 1,
+  "target_users": 5,
+  "planned_duration_seconds": 10,
+  "actual_duration_seconds": 10.91,
+  "created_at_utc": "2026-11-16T17:16:32.812783+00:00",
+  "host": "http://127.0.0.1:8001",
+  "resources_summary": {
+    "avg_system_cpu_pct": 14.3,
+    "max_system_cpu_pct": 20.1,
+    "avg_uvicorn_cpu_pct": 23.44,
+    "max_uvicorn_cpu_pct": 32.4,
+    "avg_uvicorn_rss_mb": 231.38,
+    "max_uvicorn_rss_mb": 231.61,
+    "avg_locust_cpu_pct": 2.85,
+    "max_locust_cpu_pct": 7.4,
+    "samples_count": 11
+  },
+  "stdout_tail": ""
+}

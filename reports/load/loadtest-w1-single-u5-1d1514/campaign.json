@@ -1,0 +1,23 @@
+{
+  "campaign_id": "loadtest-w1-single-u5-1d1514",
+  "scenario": "single",
+  "user_class": "SinglePredictionUser",
+  "workers_count": 1,
+  "target_users": 5,
+  "planned_duration_seconds": 10,
+  "actual_duration_seconds": 11.39,
+  "created_at_utc": "2026-11-16T17:16:06.882966+00:00",
+  "host": "http://127.0.0.1:8001",
+  "resources_summary": {
+    "avg_system_cpu_pct": 29.26,
+    "max_system_cpu_pct": 43.3,
+    "avg_uvicorn_cpu_pct": 20.35,
+    "max_uvicorn_cpu_pct": 32.4,
+    "avg_uvicorn_rss_mb": 229.3,
+    "max_uvicorn_rss_mb": 229.77,
+    "avg_locust_cpu_pct": 13.49,
+    "max_locust_cpu_pct": 66.7,
+    "samples_count": 11
+  },
+  "stdout_tail": ""
+}

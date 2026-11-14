@@ -1,0 +1,23 @@
+{
+  "campaign_id": "loadtest-w2-single-u10-5186a8",
+  "scenario": "single",
+  "user_class": "SinglePredictionUser",
+  "workers_count": 2,
+  "target_users": 10,
+  "planned_duration_seconds": 15,
+  "actual_duration_seconds": 15.89,
+  "created_at_utc": "2026-11-16T17:20:11.632865+00:00",
+  "host": "http://127.0.0.1:8001",
+  "resources_summary": {
+    "avg_system_cpu_pct": 15.09,
+    "max_system_cpu_pct": 28.2,
+    "avg_uvicorn_cpu_pct": 0.0,
+    "max_uvicorn_cpu_pct": 0.0,
+    "avg_uvicorn_rss_mb": 34.69,
+    "max_uvicorn_rss_mb": 34.7,
+    "avg_locust_cpu_pct": 4.94,
+    "max_locust_cpu_pct": 10.4,
+    "samples_count": 16
+  },
+  "stdout_tail": ""
+}

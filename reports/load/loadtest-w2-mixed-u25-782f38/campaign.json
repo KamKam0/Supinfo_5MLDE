@@ -1,0 +1,23 @@
+{
+  "campaign_id": "loadtest-w2-mixed-u25-782f38",
+  "scenario": "mixed",
+  "user_class": "MixedWorkloadUser",
+  "workers_count": 2,
+  "target_users": 25,
+  "planned_duration_seconds": 15,
+  "actual_duration_seconds": 15.89,
+  "created_at_utc": "2026-11-16T17:21:41.023132+00:00",
+  "host": "http://127.0.0.1:8001",
+  "resources_summary": {
+    "avg_system_cpu_pct": 20.43,
+    "max_system_cpu_pct": 27.6,
+    "avg_uvicorn_cpu_pct": 0.0,
+    "max_uvicorn_cpu_pct": 0.0,
+    "avg_uvicorn_rss_mb": 34.59,
+    "max_uvicorn_rss_mb": 34.59,
+    "avg_locust_cpu_pct": 11.59,
+    "max_locust_cpu_pct": 19.4,
+    "samples_count": 16
+  },
+  "stdout_tail": ""
+}

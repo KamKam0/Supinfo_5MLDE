@@ -1,0 +1,23 @@
+{
+  "campaign_id": "loadtest-w4-mixed-u25-cebbee",
+  "scenario": "mixed",
+  "user_class": "MixedWorkloadUser",
+  "workers_count": 4,
+  "target_users": 25,
+  "planned_duration_seconds": 15,
+  "actual_duration_seconds": 15.94,
+  "created_at_utc": "2026-11-16T17:23:30.535022+00:00",
+  "host": "http://127.0.0.1:8001",
+  "resources_summary": {
+    "avg_system_cpu_pct": 26.33,
+    "max_system_cpu_pct": 38.3,
+    "avg_uvicorn_cpu_pct": 0.19,
+    "max_uvicorn_cpu_pct": 1.5,
+    "avg_uvicorn_rss_mb": 34.75,
+    "max_uvicorn_rss_mb": 34.75,
+    "avg_locust_cpu_pct": 17.14,
+    "max_locust_cpu_pct": 80.6,
+    "samples_count": 16
+  },
+  "stdout_tail": ""
+}
