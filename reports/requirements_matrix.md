@@ -30,18 +30,18 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-20** | **Charge** | `locustfile.py`, scénarios de charge | Campagnes de tirs Locust documentées avec génération de rapports de latence, throughput et erreurs | `TODO` |
 | **REQ-21** | **Comparaison et ressources** | Benchmarks 1, 2, 4 workers, profilage CPU/RAM | Table comparative de performance avec saturation CPU/mémoire mesurée sur conteneurs | `TODO` |
 | **REQ-22** | **Recommandation chiffrée** | Rapport de dimensionnement technique | Dimensionnement matériel cible étayé par les données expérimentales et hypothèses de charge | `TODO` |
-| **REQ-23** | **Dashboard complet** | Tableau de bord Grafana provisionné | Visualisation des volumes d'ingestion, taux de prédiction, distribution des temps de latence, erreurs et retours | `TODO` |
+| **REQ-23** | **Dashboard complet** | Tableau de bord Grafana provisionné | Visualisation des volumes d'ingestion, taux de prédiction, distribution des temps de latence, erreurs et retours | `DONE` |
 | **REQ-24** | **Démonstration intégrée** | `scripts/demo_full.py`, rapport de soutenance | Scénario de bout en bout : nominal, injection de données invalides, incident simulé, alerte et reprise | `TODO` |
 | **REQ-25** | **Dépôt propre** | Racine projet, `.gitignore`, exclusion de secrets/data | Inspection de l'arbre Git prouvant l'absence totale de CSV volumineux, secrets ou caches | `IN_PROGRESS` |
 | **REQ-26** | **README complet** | `README.md` exhaustif | Guide de démarrage clair, commandes reproductibles, architecture expliquée, repris à partir d'un clone vierge | `IN_PROGRESS` |
-| **REQ-27** | **Synthèse OPS** | `reports/ops_summary.md` | Document de synthèse d'exploitation fondé sur les résultats réels, compromis et limites du système | `TODO` |
+| **REQ-27** | **Synthèse OPS** | `reports/ops_summary.md` | Document de synthèse d'exploitation fondé sur les résultats réels, compromis et limites du système | `IN_PROGRESS` |
 
 ---
 
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 16
-- **Exigences `IN_PROGRESS` :** 5
-- **Exigences `TODO` :** 6
+- **Exigences `DONE` :** 17
+- **Exigences `IN_PROGRESS` :** 6
+- **Exigences `TODO` :** 4
 - **Exigences `BLOCKED` :** 0

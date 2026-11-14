@@ -1,0 +1,755 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "Rangée 1 — Pipeline d'Entraînement & Qualité des Données",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 70 },
+              { "color": "green", "value": 90 }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "total_pipeline_runs" },
+            "properties": [{ "id": "unit", "value": "none" }, { "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "successful_runs" },
+            "properties": [{ "id": "unit", "value": "none" }, { "id": "color", "value": { "fixedColor": "green", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "failed_runs" },
+            "properties": [{ "id": "unit", "value": "none" }, { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT count(*) AS total_pipeline_runs, count(*) FILTER (WHERE terminal_state = 'COMPLETED') AS successful_runs, count(*) FILTER (WHERE terminal_state = 'FAILED') AS failed_runs, round((100.0 * count(*) FILTER (WHERE terminal_state = 'COMPLETED') / NULLIF(count(*), 0))::numeric, 1) AS success_rate_pct FROM ops.pipeline_runs;",
+          "refId": "A"
+        }
+      ],
+      "title": "Exécutions de Pipeline & Taux de Succès",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 80 },
+              { "color": "green", "value": 95 }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "gx_rejected_count" },
+            "properties": [{ "id": "unit", "value": "none" }, { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT count(*) FILTER (WHERE gx_validation_passed = false) AS gx_rejected_count, round((100.0 * count(*) FILTER (WHERE gx_validation_passed = true) / NULLIF(count(*), 0))::numeric, 1) AS gx_compliance_rate_pct FROM ops.pipeline_runs;",
+          "refId": "A"
+        }
+      ],
+      "title": "Conformité Great Expectations",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 300 },
+              { "color": "red", "value": 3600 }
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT round(EXTRACT(EPOCH FROM (now() - last_sync_at))::numeric, 0) AS sync_lag_seconds FROM ops.export_sync_state WHERE exporter_id = 'prefect_sync_worker';",
+          "refId": "A"
+        }
+      ],
+      "title": "Fraîcheur Télémétrie OPS (Décalage)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "hideFrom": { "legend": false, "tooltip": false, "viz": false } },
+          "mappings": [],
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 5 },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true,
+        "sortBy": [{ "desc": true, "displayName": "started_at" }]
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT flow_run_id, batch_id, trigger_mode, terminal_state, round(duration_seconds::numeric, 1) AS duration_sec, gx_validation_passed, started_at FROM ops.pipeline_runs ORDER BY started_at DESC LIMIT 15;",
+          "refId": "A"
+        }
+      ],
+      "title": "Historique Détaillé des Entraînements Prefect",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 11 },
+      "id": 200,
+      "title": "Rangée 2 — Trafic & Erreurs de l'API d'Inférence",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "mappings": [],
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 12 },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT count(*) AS total_requests FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1);",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Requêtes HTTP Reçues",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "purple" },
+          "mappings": [],
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 12 },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT COALESCE(sum(item_count) FILTER (WHERE http_status = 200 AND endpoint IN ('/predict', '/predict/batch')), 0) AS total_games_predicted FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1);",
+          "refId": "A"
+        }
+      ],
+      "title": "Jeux Prédits avec Succès",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "red", "value": 5 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 12 },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT round((100.0 * count(*) FILTER (WHERE http_status >= 500) / NULLIF(count(*), 0))::numeric, 2) AS error_rate_5xx_pct FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1);",
+          "refId": "A"
+        }
+      ],
+      "title": "Taux d'Erreurs 5xx (Total Tentatives)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 10 },
+              { "color": "red", "value": 25 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 12 },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT round((100.0 * count(*) FILTER (WHERE http_status BETWEEN 400 AND 499) / NULLIF(count(*), 0))::numeric, 2) AS error_rate_4xx_pct FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1);",
+          "refId": "A"
+        }
+      ],
+      "title": "Taux d'Erreurs 4xx (Total Tentatives)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "none" }
+      },
+      "gridPos": { "h": 6, "w": 14, "x": 0, "y": 16 },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT endpoint, count(*) AS total_attempts, count(*) FILTER (WHERE http_status BETWEEN 200 AND 299) AS count_2xx, count(*) FILTER (WHERE http_status BETWEEN 400 AND 499) AS count_4xx, count(*) FILTER (WHERE http_status >= 500) AS count_5xx, round((100.0 * count(*) FILTER (WHERE http_status >= 500) / NULLIF(count(*), 0))::numeric, 2) AS error_rate_5xx_pct FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1) GROUP BY endpoint ORDER BY endpoint;",
+          "refId": "A"
+        }
+      ],
+      "title": "Distribution des Requêtes et Statuts HTTP par Endpoint",
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "none" }
+      },
+      "gridPos": { "h": 6, "w": 10, "x": 14, "y": 16 },
+      "id": 10,
+      "options": {
+        "displayLabels": ["percent", "value"],
+        "legend": { "displayMode": "list", "placement": "right", "showLegend": true },
+        "pieType": "pie",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT COALESCE(error_code, 'SUCCESS') AS error_code, count(*) AS count FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1) GROUP BY error_code ORDER BY count DESC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Répartition des Codes d'Erreurs / Succès",
+      "type": "piechart"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
+      "id": 300,
+      "title": "Rangée 3 — Latences, Percentiles & Activité des Workers",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "ms" }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 23 },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT endpoint, count(*) AS requests_count, round(avg(processing_duration_ms)::numeric, 2) AS mean_ms, round(percentile_cont(0.50) WITHIN GROUP (ORDER BY processing_duration_ms)::numeric, 2) AS p50_ms, round(percentile_cont(0.95) WITHIN GROUP (ORDER BY processing_duration_ms)::numeric, 2) AS p95_ms, round(percentile_cont(0.99) WITHIN GROUP (ORDER BY processing_duration_ms)::numeric, 2) AS p99_ms FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1) GROUP BY endpoint ORDER BY endpoint;",
+          "refId": "A"
+        }
+      ],
+      "title": "Latences de Traitement Total (p50, p95, p99 SQL exacts)",
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "ms" }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 23 },
+      "id": 12,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT endpoint, count(*) AS count_success, round(avg(inference_duration_ms)::numeric, 2) AS mean_inference_ms, round(percentile_cont(0.50) WITHIN GROUP (ORDER BY inference_duration_ms)::numeric, 2) AS p50_inference_ms, round(percentile_cont(0.95) WITHIN GROUP (ORDER BY inference_duration_ms)::numeric, 2) AS p95_inference_ms, round(percentile_cont(0.99) WITHIN GROUP (ORDER BY inference_duration_ms)::numeric, 2) AS p99_inference_ms FROM tracing.api_requests WHERE inference_duration_ms IS NOT NULL AND http_status = 200 AND ($__timeFilter(started_at) OR 1=1) GROUP BY endpoint ORDER BY endpoint;",
+          "refId": "A"
+        }
+      ],
+      "title": "Latences d'Inférence Pure Modèles (p50, p95, p99)",
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "none" }
+      },
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 29 },
+      "id": 13,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT instance_id, worker_pid, count(*) AS requests_handled, round(avg(processing_duration_ms)::numeric, 2) AS avg_duration_ms, min(started_at) AS first_request, max(started_at) AS last_request FROM tracing.api_requests WHERE ($__timeFilter(started_at) OR 1=1) GROUP BY instance_id, worker_pid ORDER BY requests_handled DESC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Activité et Répartition de Charge par Worker (PID & Instance)",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 35 },
+      "id": 400,
+      "title": "Rangée 4 — Modèles Servis & Collecte des Feedbacks",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "none" }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 36 },
+      "id": 14,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT mv.registered_name, mv.task, mv.version, count(p.prediction_id) AS predictions_served FROM tracing.model_versions mv LEFT JOIN tracing.predictions p ON p.model_id = mv.model_id GROUP BY mv.registered_name, mv.task, mv.version ORDER BY mv.task, mv.version DESC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Versions de Modèles Servies & Prédictions Associées",
+      "type": "table"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 36 },
+      "id": 15,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT count(*) AS total_feedbacks FROM tracing.feedbacks;",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Feedbacks Reçus",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 50 },
+              { "color": "green", "value": 75 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 36 },
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT round((100.0 * count(*) FILTER (WHERE useful = true) / NULLIF(count(*) FILTER (WHERE useful IS NOT NULL), 0))::numeric, 1) AS useful_satisfaction_pct FROM tracing.feedbacks;",
+          "refId": "A"
+        }
+      ],
+      "title": "Satisfaction Utilisateur (Avis Utiles)",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
+      "id": 500,
+      "title": "Rangée 5 — Qualité Observée & Dérive (Vérités Terrain Réelles)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 15 },
+              { "color": "red", "value": 25 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 43 },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT round(avg(abs(p.predicted_pct - f.observed_pct))::numeric, 2) AS regression_observed_mae FROM tracing.predictions p JOIN tracing.feedbacks f ON f.prediction_id = p.prediction_id WHERE p.task = 'regression' AND f.observed_pct IS NOT NULL AND f.label_source NOT IN ('loadtest', 'synthetic-course');",
+          "refId": "A"
+        }
+      ],
+      "title": "MAE Régression Réelle (% points)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 60 },
+              { "color": "green", "value": 75 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 43 },
+      "id": 18,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT round((100.0 * count(*) FILTER (WHERE f.observed_owners = p.predicted_owners) / NULLIF(count(*), 0))::numeric, 1) AS classification_observed_accuracy FROM tracing.predictions p JOIN tracing.feedbacks f ON f.prediction_id = p.prediction_id WHERE p.task = 'classification' AND f.observed_owners IS NOT NULL AND f.label_source NOT IN ('loadtest', 'synthetic-course');",
+          "refId": "A"
+        }
+      ],
+      "title": "Exactitude Classification Réelle (Accuracy)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 43 },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "pluginVersion": "13.2.3",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+          "format": "table",
+          "rawSql": "SELECT count(*) AS comparable_pairs_count FROM tracing.predictions p JOIN tracing.feedbacks f ON f.prediction_id = p.prediction_id WHERE f.label_source NOT IN ('loadtest', 'synthetic-course') AND (f.observed_pct IS NOT NULL OR f.observed_owners IS NOT NULL);",
+          "refId": "A"
+        }
+      ],
+      "title": "Paires de Vérité Terrain Comparables",
+      "type": "stat"
+    }
+  ],
+  "refresh": "15s",
+  "schemaVersion": 39,
+  "tags": ["steam-mlops", "supervision", "observability", "ops"],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+        "definition": "SELECT DISTINCT campaign_id FROM tracing.api_requests ORDER BY campaign_id;",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Campagne",
+        "multi": true,
+        "name": "campaign",
+        "options": [],
+        "query": "SELECT DISTINCT campaign_id FROM tracing.api_requests ORDER BY campaign_id;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": { "type": "postgres", "uid": "steam-api-postgres" },
+        "definition": "SELECT DISTINCT endpoint FROM tracing.api_requests ORDER BY endpoint;",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Endpoint",
+        "multi": true,
+        "name": "endpoint",
+        "options": [],
+        "query": "SELECT DISTINCT endpoint FROM tracing.api_requests ORDER BY endpoint;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "15s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
+  },
+  "timezone": "browser",
+  "title": "Steam MLOps — Traitements et Exploitation",
+  "uid": "steam-mlops-overview",
+  "version": 1,
+  "weekStart": ""
+}

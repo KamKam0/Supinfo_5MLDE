@@ -34,6 +34,7 @@ class AppSettings(BaseSettings):
     POSTGRES_USER: str = Field(default="postgres", alias="POSTGRES_USER")
     POSTGRES_PASSWORD: str = Field(default="5mlde-local-postgres", alias="POSTGRES_PASSWORD")
     API_DB_PASSWORD: str = Field(default="5mlde-local-api", alias="API_DB_PASSWORD")
+    OPS_DB_PASSWORD: str = Field(default="5mlde-local-ops", alias="OPS_DB_PASSWORD")
     GRAFANA_DB_PASSWORD: str = Field(default="5mlde-local-grafana", alias="GRAFANA_DB_PASSWORD")
 
     # URIs d'accès
@@ -43,6 +44,10 @@ class AppSettings(BaseSettings):
     DATABASE_URL: str = Field(
         default="postgresql://api_writer:5mlde-local-api@127.0.0.1:5432/steam_api",
         alias="DATABASE_URL",
+    )
+    OPS_DATABASE_URL: str = Field(
+        default="postgresql://ops_writer:5mlde-local-ops@127.0.0.1:5432/steam_api",
+        alias="OPS_DATABASE_URL",
     )
 
     # Constantes Scientifiques & Anti-Fuite

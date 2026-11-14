@@ -19,6 +19,7 @@ from typing import Any, Union
 from uuid import NAMESPACE_DNS, UUID, uuid4, uuid5
 
 from fastapi import Body, FastAPI, HTTPException, Request, Response, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -152,7 +153,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         request_id=request_id,
         error_code="INVALID_INPUT",
         message="Erreur de validation de la requête d'inférence (contrat strict sans variables cibles).",
-        details=exc.errors(),
+        details=jsonable_encoder(exc.errors()),
     ).model_dump()
 
     return JSONResponse(
