@@ -9,9 +9,9 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | ID | Intitulé Exigence | Module Cible / Emplacement | Protocole de Vérification & Preuve Attendue | Statut |
 |---|---|---|---|---|
 | **REQ-01** | **Code modulaire** | `src/`, `src/tracking/`, `src/orchestration/`, `api_prediction/`, `api_trigger_passif/` | Revue d'architecture, séparation stricte des 4 fonctions mères, tests unitaires par domaine sans interférence | `DONE` |
-| **REQ-02** | **Configuration séparée** | `config/*.json`, `src/settings.py`, `.env.example` | Exécution du projet depuis un répertoire tiers, validation Pydantic des configs, export de la configuration résolue | `IN_PROGRESS` |
+| **REQ-02** | **Configuration séparée** | `config/*.json`, `src/settings.py`, `.env.example` | Exécution du projet depuis un répertoire tiers, validation Pydantic des configs, export de la configuration résolue et validation check_delivery | `DONE` |
 | **REQ-03** | **Dépendances maîtrisées** | `pyproject.toml`, `uv.lock`, conteneurs fixés | Installation déterministe via `uv sync --locked`, audit des versions avec freeze complet | `DONE` |
-| **REQ-04** | **Tests et installation** | `tests/unit/`, `tests/integration/`, `tests/contracts/`, `README.md` | Exécution complète de `pytest` (100% de tests passants) et protocole d'installation "clone vierge" sans aide externe | `IN_PROGRESS` |
+| **REQ-04** | **Tests et installation** | `tests/unit/`, `tests/integration/`, `tests/contracts/`, `README.md` | Exécution complète de `pytest` (100% de tests passants) et protocole d'installation "clone vierge" sans aide externe | `DONE` |
 | **REQ-05** | **Absence de dépendance notebook** | `scripts/*.py`, CLI modulaire, APIs | Exécution nominale de bout en bout de l'ingestion, de l'entraînement et de l'inférence sans aucun serveur Jupyter | `DONE` |
 | **REQ-06** | **Ingestion reproductible** | `src/ingestion.py`, `src/data_sources/`, `data/snapshots/` | Relecture du snapshot figé, acquisition PULL avec budget réseau, upsert immuable et validation GX | `DONE` |
 | **REQ-07** | **Qualité avant prétraitement** | `src/data_validation.py`, Great Expectations | Validation bloquante sur données brutes ; espions prouvant l'absence d'appel de l'entraînement si validation KO | `DONE` |
@@ -32,16 +32,16 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-22** | **Recommandation chiffrée** | Rapport de dimensionnement technique (`reports/sizing.md`) | Dimensionnement matériel cible étayé par les données expérimentales et hypothèses de charge | `DONE` |
 | **REQ-23** | **Dashboard complet** | Tableau de bord Grafana provisionné | Visualisation des volumes d'ingestion, taux de prédiction, distribution des temps de latence, erreurs et retours | `DONE` |
 | **REQ-24** | **Démonstration intégrée** | `scripts/demo_full.py`, rapport de soutenance | Scénario de bout en bout : nominal, injection de données invalides, incident simulé, alerte et reprise | `TODO` |
-| **REQ-25** | **Dépôt propre** | Racine projet, `.gitignore`, exclusion de secrets/data | Inspection de l'arbre Git prouvant l'absence totale de CSV volumineux, secrets ou caches | `IN_PROGRESS` |
-| **REQ-26** | **README complet** | `README.md` exhaustif | Guide de démarrage clair, commandes reproductibles, architecture expliquée, repris à partir d'un clone vierge | `IN_PROGRESS` |
-| **REQ-27** | **Synthèse OPS** | `reports/ops_summary.md` | Document de synthèse d'exploitation fondé sur les résultats réels, compromis et limites du système | `IN_PROGRESS` |
+| **REQ-25** | **Dépôt propre** | Racine projet, `.gitignore`, exclusion de secrets/data | Inspection de l'arbre Git prouvant l'absence totale de CSV volumineux, secrets ou caches (`scripts/check_delivery.py`) | `DONE` |
+| **REQ-26** | **README complet** | `README.md` exhaustif | Guide de démarrage clair, commandes reproductibles, architecture expliquée, repris à partir d'un clone vierge | `DONE` |
+| **REQ-27** | **Synthèse OPS** | `reports/ops_summary.md` | Document de synthèse d'exploitation fondé sur les résultats réels, compromis et limites du système (`reports/ops_summary.md`) | `DONE` |
 
 ---
 
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 21
-- **Exigences `IN_PROGRESS` :** 5
+- **Exigences `DONE` :** 26
+- **Exigences `IN_PROGRESS` :** 0
 - **Exigences `TODO` :** 1
 - **Exigences `BLOCKED` :** 0
