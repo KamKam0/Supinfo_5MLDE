@@ -154,6 +154,16 @@ def build_service_manifest(
     # Calcul de l'empreinte SHA-256
     manifest_data["manifest_sha256"] = compute_manifest_sha256(manifest_data)
 
+    # Sauvegarde du manifeste précédent avant écrasement
+    if out_file.exists():
+        prev_file = out_file.with_name(out_file.stem + ".prev" + out_file.suffix)
+        try:
+            import shutil
+            shutil.copy2(out_file, prev_file)
+            logger.info(f"[MANIFEST] Ancien manifeste sauvegardé vers {prev_file.name}")
+        except Exception as exc:
+            logger.warning(f"[MANIFEST] Impossible de sauvegarder l'ancien manifeste dans {prev_file} : {exc}")
+
     # Écriture atomique
     tmp_out = out_file.with_suffix(".tmp")
     with open(tmp_out, "w", encoding="utf-8") as f:

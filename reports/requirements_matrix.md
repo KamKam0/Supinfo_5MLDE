@@ -21,7 +21,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-11** | **Échecs et alertes** | Retries bornés, webhook local et simulateur (`src/orchestration/alerts.py`) | Récepteur HTTP local autonome, transmission d'alertes JSON formatées sur échec sans blocage amont, connecteur Teams sécurisé | `DONE` |
 | **REQ-12** | **Suivi complet (Tracking)** | MLflow Tracking Server, `src/tracking/mlflow_tracking.py` | Enregistrement systématique des hyperparamètres, métriques, versions de code, snapshots et artefacts rechargeables | `DONE` |
 | **REQ-13** | **Versionnement et règles** | MLflow Model Registry, `src/tracking/registry.py` | Enregistrement Model Registry des modèles, règles d'acceptation automatique et promotion @champion | `DONE` |
-| **REQ-14** | **Retour arrière (Rollback)** | Manifeste de publication, script de rollback | Réactivation d'une version antérieure sans réentraînement validée ; scénario de crise complet | `IN_PROGRESS` |
+| **REQ-14** | **Retour arrière (Rollback)** | Manifeste de publication, script de rollback | Réactivation d'une version antérieure sans réentraînement validée ; scénarios de crise, runbooks et audit relationnel validés | `DONE` |
 | **REQ-15** | **Prédiction (Inférence)** | `api_prediction/`, `scripts/build_service_manifest.py`, `state/service-manifest.json` | Endpoints `/predict` unitaire et `/predict/batch` pour régression et classification conjointes, chargement au lifespan sans reload par requête, tests validés | `DONE` |
 | **REQ-16** | **Validation et erreurs** | `api_prediction/schemas.py`, `src/contracts.py` | Schémas Pydantic stricts (extra='forbid'), rejet formel en HTTP 422 de toute variable cible (pct_pos_total, etc.), codes d'erreurs standardisés | `DONE` |
 | **REQ-17** | **Version utilisée** | `api_prediction/main.py`, `infra/postgres/010-tracing.sql` | Présence de `model_version`, `model_name` et `request_id` unique dans chaque réponse HTTP et traçabilité en base PostgreSQL `tracing.model_versions` | `DONE` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 20
-- **Exigences `IN_PROGRESS` :** 6
+- **Exigences `DONE` :** 21
+- **Exigences `IN_PROGRESS` :** 5
 - **Exigences `TODO` :** 1
 - **Exigences `BLOCKED` :** 0

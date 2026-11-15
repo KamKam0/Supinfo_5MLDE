@@ -487,6 +487,19 @@ def submit_feedback(
         )
     except Exception as exc:
         logger.error(f"[FEEDBACK] Erreur inattendue : {exc}")
+        record_api_request_error(
+            pool=db_pool,
+            request_id=req_uuid,
+            started_at=started_at,
+            endpoint="/feedback",
+            http_status=503,
+            error_code="DEPENDENCY_UNAVAILABLE",
+            processing_duration_ms=0.0,
+            worker_pid=os.getpid(),
+            instance_id=UUID(state.instance_id),
+            api_revision=state.manifest.get("application_revision", "unknown"),
+            campaign_id=campaign_id,
+        )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=f"Erreur de persistance du feedback : {exc}",

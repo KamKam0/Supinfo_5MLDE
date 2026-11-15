@@ -44,8 +44,8 @@ class DatabasePool:
         self._created_connections = 0
 
     def _create_connection(self) -> psycopg.Connection:
-        """Crée une nouvelle connexion avec configuration d'encodage et de schéma."""
-        conn = psycopg.connect(self.database_url, autocommit=True)
+        """Crée une nouvelle connexion avec configuration d'encodage, schéma et timeout borné."""
+        conn = psycopg.connect(self.database_url, autocommit=True, connect_timeout=3)
         return conn
 
     @contextmanager
