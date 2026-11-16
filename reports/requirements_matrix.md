@@ -31,7 +31,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 | **REQ-21** | **Comparaison et ressources** | Benchmarks 1, 2, 4 workers, profilage CPU/RAM (`scripts/collect_resources.py`) | Table comparative de performance avec saturation CPU/mémoire mesurée sur conteneurs | `DONE` |
 | **REQ-22** | **Recommandation chiffrée** | Rapport de dimensionnement technique (`reports/sizing.md`) | Dimensionnement matériel cible étayé par les données expérimentales et hypothèses de charge | `DONE` |
 | **REQ-23** | **Dashboard complet** | Tableau de bord Grafana provisionné | Visualisation des volumes d'ingestion, taux de prédiction, distribution des temps de latence, erreurs et retours | `DONE` |
-| **REQ-24** | **Démonstration intégrée** | `scripts/demo_full.py`, rapport de soutenance | Scénario de bout en bout : nominal, injection de données invalides, incident simulé, alerte et reprise | `TODO` |
+| **REQ-24** | **Démonstration intégrée** | `scripts/demo_full.py`, `scripts/demo_nominal.py` | Scénario de bout en bout nominal (7 étapes), incidents simulés (5 scénarios), alerte et reprise validés | `DONE` |
 | **REQ-25** | **Dépôt propre** | Racine projet, `.gitignore`, exclusion de secrets/data | Inspection de l'arbre Git prouvant l'absence totale de CSV volumineux, secrets ou caches (`scripts/check_delivery.py`) | `DONE` |
 | **REQ-26** | **README complet** | `README.md` exhaustif | Guide de démarrage clair, commandes reproductibles, architecture expliquée, repris à partir d'un clone vierge | `DONE` |
 | **REQ-27** | **Synthèse OPS** | `reports/ops_summary.md` | Document de synthèse d'exploitation fondé sur les résultats réels, compromis et limites du système (`reports/ops_summary.md`) | `DONE` |
@@ -41,7 +41,7 @@ Ce document assure la correspondance biunivoque entre les exigences fonctionnell
 ## 2. Indicateurs Clés de Conformité
 
 - **Nombre total d'exigences :** 27
-- **Exigences `DONE` :** 26
+- **Exigences `DONE` :** 27
 - **Exigences `IN_PROGRESS` :** 0
-- **Exigences `TODO` :** 1
+- **Exigences `TODO` :** 0
 - **Exigences `BLOCKED` :** 0

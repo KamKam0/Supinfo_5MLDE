@@ -1,0 +1,47 @@
+{
+  "campaign": "demo-nominal",
+  "started_at": "2026-11-16T18:05:28.321712+00:00",
+  "fast_mode": true,
+  "with_incidents": false,
+  "steps": {
+    "1_doctor": {
+      "status": "SUCCESS",
+      "environment": "READY"
+    },
+    "2_data_validation": {
+      "status": "SUCCESS",
+      "suite": "historical_schema_v1",
+      "row_count": 5000,
+      "failed_checks_count": 0,
+      "success": true
+    },
+    "3_pipeline": {
+      "status": "SUCCESS",
+      "mode": "fast"
+    },
+    "4_manifest": {
+      "status": "SUCCESS",
+      "manifest_id": "man-a277316b",
+      "manifest_sha256": "3c1ca9a564451499c5ff22672e9f46dbe65a12fb8324d36007528cf58b6ef566",
+      "regression_version": "20",
+      "classification_version": "20"
+    },
+    "5_inference": {
+      "single_prediction_id": "fbdae84a-3d0b-48a8-95ad-07f8cd58fef0",
+      "status": "SUCCESS",
+      "batch_count": 3,
+      "leak_rejected_422": true
+    },
+    "6_feedback": {
+      "status": "SUCCESS",
+      "feedback_id": "22c6ab28-81b3-4b06-b78f-a10b8720a51b",
+      "idempotence_verified": true
+    },
+    "7_sql_audit": {
+      "status": "SUCCESS",
+      "sql_reconciled": true
+    }
+  },
+  "overall_status": "SUCCESS",
+  "duration_seconds": 171.25
+}

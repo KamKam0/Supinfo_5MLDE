@@ -178,9 +178,8 @@ def test_incident_model_rollback_and_hash_tampering_protection():
     prev_manifest_path = settings.PROJECT_ROOT / "state" / "service-manifest.prev.json"
     assert manifest_path.exists()
 
-    # Sauvegarde
-    if not prev_manifest_path.exists():
-        shutil.copy2(manifest_path, prev_manifest_path)
+    # Sauvegarde de référence pour le test
+    shutil.copy2(manifest_path, prev_manifest_path)
 
     manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
 

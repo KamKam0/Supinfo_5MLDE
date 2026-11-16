@@ -1,5 +1,5 @@
 {
-  "run_id": "run-3b4dcc3d",
+  "run_id": "run-31ed561b",
   "regression": {
     "train": {
       "samples": 39209,
@@ -77,9 +77,9 @@
     }
   },
   "training_durations_sec": {
-    "regression_candidate": 16.043,
-    "regression_baseline": 16.029,
-    "classification_candidate": 23.075,
-    "classification_baseline": 23.08
+    "regression_candidate": 17.371,
+    "regression_baseline": 21.672,
+    "classification_candidate": 25.06,
+    "classification_baseline": 25.238
   }
 }

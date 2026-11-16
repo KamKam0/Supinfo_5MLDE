@@ -203,6 +203,6 @@ uv run --locked python scripts/run_capacity_matrix.py --workers 1,2,4 --scenario
 - [docs/openapi.json](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/openapi.json) : Spécification OpenAPI 3.1.0 brute extraite du code.
 
 ### Rapports & Preuves Matérielles (`reports/`)
-- [reports/requirements_matrix.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/requirements_matrix.md) : Matrice de conformité des 27 exigences (**26 DONE**, 1 TODO).
+- [reports/requirements_matrix.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/requirements_matrix.md) : Matrice de conformité des 27 exigences (**27 DONE**).
 - [reports/sizing.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/sizing.md) : Rapport officiel de dimensionnement et recommandation matérielle étayée.
 - [reports/ops_summary.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/ops_summary.md) : Synthèse d'exploitation consolidée et limites scientifiques identifiées.

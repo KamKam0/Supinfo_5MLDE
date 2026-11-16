@@ -1,126 +1,28 @@
 {
-  "timestamp": "2026-11-16T16:12:14.541322+00:00",
+  "timestamp": "2026-11-16T18:15:07.561008+00:00",
   "suite_name": "historical_schema_v1",
-  "dataset_name": "corrupted_snapshot",
-  "row_count": 2,
-  "column_count": 3,
+  "dataset_name": "test_corrupted_unit",
+  "row_count": 1,
+  "column_count": 16,
   "success": false,
-  "failed_checks_count": 14,
+  "failed_checks_count": 3,
   "failed_checks": [
     {
       "source": "great_expectations",
       "expectation": "expect_column_values_to_be_between",
-      "column": "dlc_count",
+      "column": "price",
       "details": {}
     },
     {
       "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "achievements",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "positive",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "negative",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "num_reviews_total",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "required_age",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "pct_pos_total",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_in_set",
-      "column": "windows",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_in_set",
-      "column": "mac",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_in_set",
-      "column": "linux",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_match_regex",
-      "column": "release_date",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_match_regex",
-      "column": "estimated_owners",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_table_columns_to_match_set",
-      "column": "table",
+      "expectation": "expect_column_values_to_be_in_type_list",
+      "column": "price",
       "details": {
-        "observed_value": [
-          "appid",
-          "name",
-          "price"
-        ],
-        "details": {
-          "mismatched": {
-            "missing": [
-              "achievements",
-              "dlc_count",
-              "estimated_owners",
-              "genres",
-              "linux",
-              "mac",
-              "negative",
-              "num_reviews_total",
-              "pct_pos_total",
-              "positive",
-              "release_date",
-              "required_age",
-              "windows"
-            ]
-          }
-        }
-      }
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_unique",
-      "column": "appid",
-      "details": {
-        "element_count": 2,
-        "unexpected_count": 2,
+        "element_count": 1,
+        "unexpected_count": 1,
         "unexpected_percent": 100.0,
         "partial_unexpected_list": [
-          1,
-          1
+          "Gratuit"
         ],
         "missing_count": 0,
         "missing_percent": 0.0,
@@ -128,18 +30,43 @@
         "unexpected_percent_nonmissing": 100.0,
         "partial_unexpected_counts": [
           {
-            "value": 1,
-            "count": 2
+            "value": "Gratuit",
+            "count": 1
           }
         ],
         "partial_unexpected_index_list": [
-          0,
-          1
+          0
+        ]
+      }
+    },
+    {
+      "source": "great_expectations",
+      "expectation": "expect_column_values_to_be_between",
+      "column": "pct_pos_total",
+      "details": {
+        "element_count": 1,
+        "unexpected_count": 1,
+        "unexpected_percent": 100.0,
+        "partial_unexpected_list": [
+          250.0
+        ],
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_percent_total": 100.0,
+        "unexpected_percent_nonmissing": 100.0,
+        "partial_unexpected_counts": [
+          {
+            "value": 250.0,
+            "count": 1
+          }
+        ],
+        "partial_unexpected_index_list": [
+          0
         ]
       }
     }
   ],
   "sample_offending_appids": [
-    1
+    999888
   ]
 }
