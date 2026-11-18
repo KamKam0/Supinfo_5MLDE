@@ -118,8 +118,8 @@ uv run --locked python scripts/doctor.py
 # 1. Scellement des partitions stratifiées sans fuite (Train 70%, Val 15%, Test 15%)
 uv run --locked python scripts/freeze_partitions.py --config config/training.historical.json
 
-# 2. Entraînement des modèles et baselines (scikit-learn + MLflow)
-uv run --locked python main.py --config config/training.historical.json
+# 2. Entraînement orchestré Prefect (GX, scikit-learn + baselines, MLflow, qualification, promotion @champion)
+uv run --locked python -m src.orchestration.tasks --snapshot data/snapshots/historical_projection.csv --batch-id initial
 
 # 3. Qualification et génération du manifeste de service actif
 uv run --locked python scripts/build_service_manifest.py --alias champion

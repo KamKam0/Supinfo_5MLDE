@@ -124,7 +124,7 @@ def evaluate_models(
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(metrics_payload, f, indent=2)
 
-    # Manifeste local pour l'outil predict.py
+    # Manifeste local des pipelines sérialisés (mis à jour par scripts/select_models.py)
     state_dir = art_dir.parent / "state"
     state_dir.mkdir(parents=True, exist_ok=True)
     manifest_local = {

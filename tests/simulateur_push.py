@@ -1,10 +1,10 @@
-"""simulateur_push.py - Simulateur d'envoi d'observations labellisées pour la collecte passive.
+"""tests/simulateur_push.py - Simulateur d'envoi d'observations labellisées pour la collecte passive.
 
 Usage :
-    uv run --locked python simulateur_push.py 499
-    uv run --locked python simulateur_push.py 1
-    uv run --locked python simulateur_push.py 1
-    uv run --locked python simulateur_push.py 499
+    uv run --locked python tests/simulateur_push.py 499
+    uv run --locked python tests/simulateur_push.py 1
+    uv run --locked python tests/simulateur_push.py 1
+    uv run --locked python tests/simulateur_push.py 499
 """
 
 from __future__ import annotations

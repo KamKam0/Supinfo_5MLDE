@@ -20,7 +20,7 @@ import pytest
 from api_trigger_passif.main import create_app
 from api_trigger_passif.storage import PushStorage
 from api_trigger_passif.training_trigger import process_batch
-from simulateur_push import generate_synthetic_push_event
+from tests.simulateur_push import generate_synthetic_push_event
 from src.contracts import REQUIRED_SNAPSHOT_COLUMNS
 
 
