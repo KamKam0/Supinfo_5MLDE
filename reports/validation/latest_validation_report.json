@@ -1,72 +1,11 @@
 {
-  "timestamp": "2026-11-16T18:15:07.561008+00:00",
-  "suite_name": "historical_schema_v1",
-  "dataset_name": "test_corrupted_unit",
-  "row_count": 1,
+  "timestamp": "2026-11-17T15:16:31.901757+00:00",
+  "suite_name": "snapshot_integrity_v1",
+  "dataset_name": "historical_projection",
+  "row_count": 94948,
   "column_count": 16,
-  "success": false,
-  "failed_checks_count": 3,
-  "failed_checks": [
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "price",
-      "details": {}
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_in_type_list",
-      "column": "price",
-      "details": {
-        "element_count": 1,
-        "unexpected_count": 1,
-        "unexpected_percent": 100.0,
-        "partial_unexpected_list": [
-          "Gratuit"
-        ],
-        "missing_count": 0,
-        "missing_percent": 0.0,
-        "unexpected_percent_total": 100.0,
-        "unexpected_percent_nonmissing": 100.0,
-        "partial_unexpected_counts": [
-          {
-            "value": "Gratuit",
-            "count": 1
-          }
-        ],
-        "partial_unexpected_index_list": [
-          0
-        ]
-      }
-    },
-    {
-      "source": "great_expectations",
-      "expectation": "expect_column_values_to_be_between",
-      "column": "pct_pos_total",
-      "details": {
-        "element_count": 1,
-        "unexpected_count": 1,
-        "unexpected_percent": 100.0,
-        "partial_unexpected_list": [
-          250.0
-        ],
-        "missing_count": 0,
-        "missing_percent": 0.0,
-        "unexpected_percent_total": 100.0,
-        "unexpected_percent_nonmissing": 100.0,
-        "partial_unexpected_counts": [
-          {
-            "value": 250.0,
-            "count": 1
-          }
-        ],
-        "partial_unexpected_index_list": [
-          0
-        ]
-      }
-    }
-  ],
-  "sample_offending_appids": [
-    999888
-  ]
+  "success": true,
+  "failed_checks_count": 0,
+  "failed_checks": [],
+  "sample_offending_appids": []
 }
