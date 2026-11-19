@@ -153,6 +153,6 @@ Chaque réponse HTTP émise par l'API de prédiction comporte les en-têtes d'au
 
 ## 4. Spécification OpenAPI et Documentation Interactive
 
-- **Spécification JSON brute :** [`docs/openapi.json`](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/openapi.json)
+- **Spécification JSON brute :** [`docs/openapi.json`](openapi.json)
 - **Documentation Swagger UI :** Accessible à l'adresse `http://127.0.0.1:8001/docs`
 - **Documentation Redoc :** Accessible à l'adresse `http://127.0.0.1:8001/redoc`

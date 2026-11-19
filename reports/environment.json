@@ -2,7 +2,7 @@
   "timestamp": "2026-11-17T15:21:30.391783+00:00",
   "status": "READY",
   "system": {
-    "executable": "C:\\Users\\kambj\\Desktop\\Supinfo\\5MLDE\\Final Project\\.venv\\Scripts\\python.exe",
+    "executable": ".venv/Scripts/python.exe",
     "version": "3.12.16",
     "major_minor": "3.12",
     "in_venv": true,

@@ -135,10 +135,10 @@ uv run --locked uvicorn api_prediction.main:app --host 127.0.0.1 --port 8001
 
 ## 5. Exécution des Suites de Tests et Validation
 
-Le projet comporte **114 tests automatisés** validant unitairement et en intégration l'ensemble de la chaîne :
+Le projet comporte **124 tests automatisés** validant unitairement et en intégration l'ensemble de la chaîne :
 
 ```sh
-# Exécution de la suite complète de non-régression (114 tests)
+# Exécution de la suite complète de non-régression (124 tests)
 uv run --locked python -m pytest tests -q
 
 # Tests d'intégration de l'API d'inférence et des transactions PostgreSQL

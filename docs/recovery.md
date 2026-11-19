@@ -50,7 +50,7 @@ cat $(ls -t reports/validation/validation_failure_*.json | head -1) | jq .
    ```sh
    uv run --locked python -m src.orchestration.flow --batch-id batch-correction-01
    ```
-5. **Rapport d'audit de référence :** Consulter [incident_invalid_data.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/incidents/incident_invalid_data.md).
+5. **Rapport d'audit de référence :** Consulter [incident_invalid_data.md](../reports/incidents/incident_invalid_data.md).
 
 ---
 
@@ -87,7 +87,7 @@ docker compose -f infra/compose.yml logs --tail 50 postgres
    ```
 5. **Rejeu de la télémétrie locale :**
    Inspecter `state/telemetry_fallback.jsonl` pour réconcilier les identifiants de requêtes tombées pendant la panne.
-6. **Rapport d'audit de référence :** Consulter [incident_postgres_down.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/incidents/incident_postgres_down.md).
+6. **Rapport d'audit de référence :** Consulter [incident_postgres_down.md](../reports/incidents/incident_postgres_down.md).
 
 ---
 
@@ -117,7 +117,7 @@ uv run --locked python scripts/reconcile.py --scan-pending
 3. Vérifier les alias dans le Model Registry MLflow (Port 7281) :
    - `http://127.0.0.1:7281/#/models/steam-positive-ratio`
    - `http://127.0.0.1:7281/#/models/steam-owner-range`
-4. **Rapport d'audit de référence :** Consulter [incident_mlflow_reconcile.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/incidents/incident_mlflow_reconcile.md).
+4. **Rapport d'audit de référence :** Consulter [incident_mlflow_reconcile.md](../reports/incidents/incident_mlflow_reconcile.md).
 
 ---
 
@@ -168,7 +168,7 @@ uv run --locked python scripts/build_service_manifest.py --alias champion
    GROUP BY m.model_name, m.model_version
    ORDER BY count(p.prediction_id) DESC;
    ```
-4. **Rapport d'audit de référence :** Consulter [incident_model_rollback.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/incidents/incident_model_rollback.md).
+4. **Rapport d'audit de référence :** Consulter [incident_model_rollback.md](../reports/incidents/incident_model_rollback.md).
 
 ---
 
@@ -198,7 +198,7 @@ uv run --locked python scripts/build_service_manifest.py --alias champion
    ```sh
    uv run --locked python scripts/demo_incident.py --scenario alert-down
    ```
-3. **Rapport d'audit de référence :** Consulter [incident_alert_failure.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/incidents/incident_alert_failure.md).
+3. **Rapport d'audit de référence :** Consulter [incident_alert_failure.md](../reports/incidents/incident_alert_failure.md).
 
 ---
 

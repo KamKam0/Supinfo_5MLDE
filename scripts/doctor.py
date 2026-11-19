@@ -19,6 +19,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+def _relative_to_project(path: str) -> str:
+    """Retourne le chemin relatif à la racine du projet (format POSIX) s'il s'y trouve, sinon le chemin brut."""
+    project_root = Path(__file__).resolve().parents[1]
+    try:
+        return Path(path).resolve().relative_to(project_root).as_posix()
+    except ValueError:
+        return path
+
+
 def mask_secret(value: str | None) -> str:
     """Masque une valeur sensible pour éviter toute fuite de secret."""
     if not value:
@@ -106,7 +115,7 @@ def run_diagnostics() -> dict:
 
     # Vérification Python & Environnement
     python_info = {
-        "executable": sys.executable,
+        "executable": _relative_to_project(sys.executable),
         "version": platform.python_version(),
         "major_minor": f"{sys.version_info.major}.{sys.version_info.minor}",
         "in_venv": sys.prefix != sys.base_prefix,

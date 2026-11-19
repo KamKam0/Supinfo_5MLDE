@@ -7,7 +7,7 @@ Ce document consigne les résultats expérimentaux des bancs de charge conduits 
 ## 1. Protocole de Mesure et Objectifs de Niveau de Service (SLO)
 
 ### Paramètres Fixes du Banc de Test
-- **Empreinte des fixtures de test :** `fixtures/load_fixtures.json` (SHA-256: `C:\Users\kambj\Desktop\Supinfo\5MLDE\Final Project\fixtures\load_fixtures.json`)
+- **Empreinte des fixtures de test :** `fixtures/load_fixtures.json` (SHA-256: `44348168f31214c7dfc15dc00f677eef74c79ea8a442cbf681d6720ea376026e`)
 - **Validation des corps :** Vérification stricte via `catch_response` (détection et rejet de tout code 200 corrompu ou incomplet).
 - **Isolation des mesures :** Phase de chauffe (*warm-up*) de 15s exclue des statistiques ; entraînements Prefect mis en pause.
 - **Traçabilité :** En-tête de corrélation `X-Test-Campaign` injecté sur 100% des requêtes HTTP.

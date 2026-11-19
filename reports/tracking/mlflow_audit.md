@@ -2,7 +2,7 @@
 
 > **Projet :** MLOps 5MLDE — Industrialisation de Modèles Steam  
 > **Date de réalisation :** 2026-11-16  
-> **Exigences couvertes :** [REQ-12](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/requirements_matrix.md) (Suivi complet / Tracking), [REQ-13](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/requirements_matrix.md) (Versionnement et règles de registre).
+> **Exigences couvertes :** [REQ-12](../requirements_matrix.md) (Suivi complet / Tracking), [REQ-13](../requirements_matrix.md) (Versionnement et règles de registre).
 
 ---
 
@@ -14,7 +14,7 @@ Le serveur de suivi centralisé est orchestré au sein du conteneur `mlflow` (im
 - **Artifact Store :** Serveur d'artefacts HTTP intégré (`--serve-artifacts`, destination `/mlflow/artifacts`)
 - **Expérience Principale :** `steam-mlops-experiments` (ID: `3`)
 
-L'intégration applicative est encapsulée dans le module [`src/tracking/mlflow_tracking.py`](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/src/tracking/mlflow_tracking.py) et le gestionnaire de registre [`src/tracking/registry.py`](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/src/tracking/registry.py).
+L'intégration applicative est encapsulée dans le module [`src/tracking/mlflow_tracking.py`](../../src/tracking/mlflow_tracking.py) et le gestionnaire de registre [`src/tracking/registry.py`](../../src/tracking/registry.py).
 
 ---
 
@@ -109,7 +109,7 @@ Deux modèles ont été officiellement créés et enregistrés en version `1` av
 
 ## 7. Preuve Matérielle de Rechargement Externe
 
-Le test d'intégration automatisé [`tests/integration/test_mlflow_reload.py`](file:///C:/Users/kambj/Desktop/Supinfo\5MLDE\Final Project\tests\integration\test_mlflow_reload.py) a prouvé formellement :
+Le test d'intégration automatisé [`tests/integration/test_mlflow_reload.py`](../../tests/integration/test_mlflow_reload.py) a prouvé formellement :
 1. **Fidélité numérique à $10^{-10}$ :**
    Les prédictions du modèle rechargé via `load_model(model_uri)` et celles du modèle d'origine en mémoire sont rigoureusement identiques bit-à-bit :
    $$\max |y_{\text{reloaded}} - y_{\text{orig}}| < 10^{-10}$$
