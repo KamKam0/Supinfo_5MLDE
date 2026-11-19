@@ -62,7 +62,7 @@ flowchart TD
     subgraph Storage["4. Persistance & Supervision"]
         FastAPI -->|"Transactions Atomiques"| Postgres[("PostgreSQL 18.6 (Port 5432)<br/>Schémas tracing & ops")]
         FastAPI -.->|"Repli si Panne SQL"| Fallback["Télémétrie de Secours<br/>(telemetry_fallback.jsonl)"]
-        Postgres --> Grafana["Dashboard Grafana 13.2.3 (Port 3001)"]
+        Postgres --> Grafana["Dashboard Grafana 13.2.3 (Port 3000)"]
     end
 ```
 
@@ -73,11 +73,11 @@ flowchart TD
 | Service | Rôle | Port | URL Locale | Identifiants |
 |---|---|---|---|---|
 | **API Inférence** | Prédiction unitaire/lot, feedbacks, santé | `8001` | [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs) | Aucun (public) |
-| **API PUSH** | Ingestion passive & accumulation 500 jeux | `8000` | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Header `X-API-Key` |
-| **Grafana** | Supervision temps réel (19 panneaux) | `3001` | [http://127.0.0.1:3001](http://127.0.0.1:3001) | `admin` / `admin` |
+| **API PUSH** | Ingestion passive & accumulation 500 jeux | `8000` | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Aucun |
+| **Grafana** | Supervision temps réel (19 panneaux) | `3000` | [http://127.0.0.1:3000](http://127.0.0.1:3000) | `admin` / `5mlde-local-admin` |
 | **MLflow Server** | Tracking d'expériences & Model Registry | `7281` | [http://127.0.0.1:7281](http://127.0.0.1:7281) | Aucun |
 | **Prefect Server** | UI d'orchestration et historique des runs | `4200` | [http://127.0.0.1:4200](http://127.0.0.1:4200) | Aucun |
-| **PostgreSQL** | Base relationnelle (schémas `tracing`, `ops`) | `5432` | `localhost:5432` | `postgres` / `postgres` |
+| **PostgreSQL** | Base relationnelle (schémas `tracing`, `ops`) | `5432` | `localhost:5432` | `postgres` / `5mlde-local-postgres` |
 
 ---
 
@@ -90,12 +90,18 @@ Ce parcours est reproductible de bout en bout depuis une copie neuve du dépôt.
 - **Python :** Version `>= 3.12` installée.
 - **Gestionnaire de paquets `uv` :** Indispensable pour la reproductibilité (`uv --version`).
 - **Docker & Docker Compose :** Opérationnel pour la stack d'infrastructure.
+- **Dataset brut (non versionné, 471 Mo) :** télécharger `games_march2025_full.csv` depuis Kaggle (*Steam Games Dataset*, artermiloff — <https://www.kaggle.com/datasets/artermiloff/steam-games-dataset>) et le déposer dans `data/raw/games_march2025_full.csv`.
 
 ### 4.2. Installation des Dépendances
 ```sh
+# Variables d'environnement locales (aucun secret réel), à la racine et pour Docker
+cp .env.example .env
+cp .env.example infra/.env
+
 # Synchronisation déterministe via le fichier de lock uv.lock
 uv sync --locked
 ```
+Si le port `3000` de Grafana est déjà occupé, modifier `GRAFANA_PORT` dans **les deux** fichiers `.env` et `infra/.env`.
 
 ### 4.3. Démarrage de l'Infrastructure Docker
 ```powershell
@@ -109,19 +115,25 @@ cd infra && docker compose up -d --wait && cd ..
 
 ### 4.4. Diagnostic d'Environnement
 ```sh
+# Application du schéma ops (télémétrie des pipelines)
+uv run --locked python scripts/apply_ops_migration.py
+
 # Vérification de conformité des 4 conteneurs et des variables d'environnement
 uv run --locked python scripts/doctor.py
 ```
 
 ### 4.5. Partitionnement et Entraînement Initial
 ```sh
-# 1. Scellement des partitions stratifiées sans fuite (Train 70%, Val 15%, Test 15%)
+# 1. Projection du dataset brut (contrôle SHA-256, 16 colonnes -> data/snapshots/historical_projection.csv)
+uv run --locked python scripts/prepare_dataset.py --config config/training.historical.json
+
+# 2. Scellement des partitions stratifiées sans fuite (Train 70%, Val 15%, Test 15%)
 uv run --locked python scripts/freeze_partitions.py --config config/training.historical.json
 
-# 2. Entraînement orchestré Prefect (GX, scikit-learn + baselines, MLflow, qualification, promotion @champion)
+# 3. Entraînement orchestré Prefect (GX, scikit-learn + baselines, MLflow, qualification, promotion @champion)
 uv run --locked python -m src.orchestration.tasks --snapshot data/snapshots/historical_projection.csv --batch-id initial
 
-# 3. Qualification et génération du manifeste de service actif
+# 4. Qualification et génération du manifeste de service actif
 uv run --locked python scripts/build_service_manifest.py --alias champion
 ```
 
@@ -131,14 +143,29 @@ uv run --locked python scripts/build_service_manifest.py --alias champion
 uv run --locked uvicorn api_prediction.main:app --host 127.0.0.1 --port 8001
 ```
 
+### 4.7. Collecte PUSH et Réentraînement par Lot
+```sh
+# API de collecte PUSH sur le port 8000 (second terminal)
+uv run --locked uvicorn api_trigger_passif.main:app --host 127.0.0.1 --port 8000
+
+# Worker de traitement des lots (troisième terminal) : l'API ne fait que constituer un lot PENDING
+# tous les 500 jeux ; le worker le valide (GX push_batch_v1), publie le snapshot et lance le réentraînement
+uv run --locked python -m api_trigger_passif.worker --train
+
+# Simulation : 499 jeux, puis le 500e qui crée le lot pris en charge par le worker
+uv run --locked python tests/simulateur_push.py 499
+uv run --locked python tests/simulateur_push.py 1
+```
+Le nouveau champion n'est pas servi automatiquement : régénérer le manifeste (`scripts/build_service_manifest.py --alias champion`) puis redémarrer l'API d'inférence.
+
 ---
 
 ## 5. Exécution des Suites de Tests et Validation
 
-Le projet comporte **124 tests automatisés** validant unitairement et en intégration l'ensemble de la chaîne :
+Le projet comporte **128 tests automatisés** validant unitairement et en intégration l'ensemble de la chaîne :
 
 ```sh
-# Exécution de la suite complète de non-régression (124 tests)
+# Exécution de la suite complète de non-régression (128 tests)
 uv run --locked python -m pytest tests -q
 
 # Tests d'intégration de l'API d'inférence et des transactions PostgreSQL
@@ -170,7 +197,10 @@ uv run --locked python scripts/demo_incident.py --scenario mlflow-reconcile
 # 4. Dégradation de modèle et retour arrière d'urgence (Rollback sans réentraînement)
 uv run --locked python scripts/demo_incident.py --scenario model-rollback
 
-# 5. Exécution globale des 5 scénarios avec génération automatique des rapports d'audit
+# 5. Webhook d'alerte injoignable
+uv run --locked python scripts/demo_incident.py --scenario alert-down
+
+# Exécution globale des 5 scénarios avec génération automatique des rapports d'audit
 uv run --locked python scripts/demo_incident.py --scenario all
 ```
 
