@@ -37,18 +37,18 @@ flowchart TD
     subgraph Ingestion["1. Ingestion & Qualité"]
         CSV["Dataset Steam (94k jeux)"] --> Projection["Projection 16 Colonnes"]
         Projection --> Snapshot["Snapshot SHA-256 Immuable"]
-        Snapshot --> GX{"Barrière GX Core 1.x\n(historical_schema_v1)"}
-        GX -.->|Échec| Alert["Alerte Bloquante (Local / Teams)"]
+        Snapshot --> GX{"Barrière GX Core 1.x<br/>(historical_schema_v1)"}
+        GX -.->|"Échec"| Alert["Alerte Bloquante (Local / Teams)"]
     end
 
     subgraph Orchestration["2. Orchestration Prefect 3.8.7 (Port 4200)"]
-        GX -->|Succès (0 défaut)| Flow["Flow Unifié (4 Tâches Mères)"]
+        GX -->|"Succès (0 défaut)"| Flow["Flow Unifié (4 Tâches Mères)"]
         Flow --> Partitions["Partitions sans Fuite (Train 70% / Val 15% / Test 15%)"]
         Partitions --> Train["Entraînement scikit-learn & Baselines Naïves"]
         Train --> Tracking["Suivi MLflow (Port 7281) : Métriques & Artefacts"]
         Tracking --> Eval{"Qualification vs Baselines"}
-        Eval -->|Accepté| Registry["Model Registry MLflow (@champion)"]
-        Eval -.->|Rejeté| DemoOnly["Statut DEMO_ONLY / Rejet"]
+        Eval -->|"Accepté"| Registry["Model Registry MLflow (@champion)"]
+        Eval -.->|"Rejeté"| DemoOnly["Statut DEMO_ONLY / Rejet"]
     end
 
     subgraph Service["3. Inférence & Production (Port 8001)"]
@@ -60,8 +60,8 @@ flowchart TD
     end
 
     subgraph Storage["4. Persistance & Supervision"]
-        FastAPI -->|Transactions Atomiques| Postgres[("PostgreSQL 18.6 (Port 5432)\nSchémas 'tracing' & 'ops'")]
-        FastAPI -.->|Repli si Panne SQL| Fallback["Télémétrie de Secours\n(telemetry_fallback.jsonl)"]
+        FastAPI -->|"Transactions Atomiques"| Postgres[("PostgreSQL 18.6 (Port 5432)<br/>Schémas tracing & ops")]
+        FastAPI -.->|"Repli si Panne SQL"| Fallback["Télémétrie de Secours<br/>(telemetry_fallback.jsonl)"]
         Postgres --> Grafana["Dashboard Grafana 13.2.3 (Port 3001)"]
     end
 ```
@@ -174,7 +174,7 @@ uv run --locked python scripts/demo_incident.py --scenario model-rollback
 uv run --locked python scripts/demo_incident.py --scenario all
 ```
 
-Tous les rapports d'incidents correspondants sont archivés dans [`reports/incidents/`](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/incidents/).
+Tous les rapports d'incidents correspondants sont archivés dans le dossier `reports/incidents/`.
 
 ---
 
@@ -183,7 +183,7 @@ Tous les rapports d'incidents correspondants sont archivés dans [`reports/incid
 Les campagnes Locust ont permis de caractériser la scalabilité multi-workers de l'API :
 - **Débit maximal unitaire soutenable :** **143.61 req/s** ($p_{95} = 90$ ms, 0.0 % erreur).
 - **Débit vectorisé par lot (20 jeux) :** **58.24 req/s** (soit **1 164.81 jeux/s** et **2 329.62 inférences/s**, $p_{95} = 200$ ms).
-- **Rapport de dimensionnement chiffré :** Consulter [`reports/sizing.md`](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/sizing.md).
+- **Rapport de dimensionnement chiffré :** disponible dans le dossier `reports/`.
 - **Commande de rejeu de la matrice :**
 ```sh
 uv run --locked python scripts/run_capacity_matrix.py --workers 1,2,4 --scenarios single,batch,mixed --concurrency 10,25 --duration 15
@@ -191,18 +191,7 @@ uv run --locked python scripts/run_capacity_matrix.py --workers 1,2,4 --scenario
 
 ---
 
-## 8. Index Documentaire du Projet
+## 8. Documentation du Projet
 
-### Corpus Technique (`docs/`)
-- [docs/architecture.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/architecture.md) : Schéma d'architecture globale, matrice des ports, isolation des schémas.
-- [docs/data_contract.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/data_contract.md) : Contrats de données d'entraînement, règles d'éligibilité, partitions.
-- [docs/model_contract.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/model_contract.md) : Contrats mathématiques, algorithmes, baselines naïves, métriques.
-- [docs/api_contract.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/api_contract.md) : Spécification des endpoints REST, schémas Pydantic, règles anti-fuite.
-- [docs/operations.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/operations.md) : Guide d'administration courante, maintenance des conteneurs, exporteur.
-- [docs/recovery.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/recovery.md) : Runbook officiel d'exploitation et procédures de reprise après panne.
-- [docs/openapi.json](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/docs/openapi.json) : Spécification OpenAPI 3.1.0 brute extraite du code.
-
-### Rapports & Preuves Matérielles (`reports/`)
-- [reports/requirements_matrix.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/requirements_matrix.md) : Matrice de conformité des 27 exigences (**27 DONE**).
-- [reports/sizing.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/sizing.md) : Rapport officiel de dimensionnement et recommandation matérielle étayée.
-- [reports/ops_summary.md](file:///C:/Users/kambj/Desktop/Supinfo/5MLDE/Final%20Project/reports/ops_summary.md) : Synthèse d'exploitation consolidée et limites scientifiques identifiées.
+- **Documentation technique** (architecture, contrats de données, de modèle et d'API, exploitation, runbook de reprise, spécification OpenAPI) : dossier `docs/`.
+- **Rapports et preuves** (matrice de conformité des exigences, dimensionnement, synthèse d'exploitation, rapports d'incidents) : dossier `reports/`.
